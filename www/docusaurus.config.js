@@ -14,17 +14,22 @@ const config = {
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
 
+  /*
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'yoloz', // Usually your GitHub org/user name.
   projectName: 'yolo-docs', // Usually your repo name.
+  // Customized for Deployment Configuration
+  trailingSlash: false,
+  deploymentBranch: `docusaurus`,
+  */
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'zh-CN',
-    locales: ['zh-CN'],
+    defaultLocale: 'zh-Hans',
+    locales: ['zh-Hans'],
     // ['en', 'fr', 'pt-BR', 'ko'],
   },
 
@@ -80,23 +85,10 @@ const config = {
             label: '文档',
           },
           { to: '/blog', label: '博客', position: 'left' },
-          // {
-          //   type: 'localeDropdown',
-          //   position: 'right',
-          //   dropdownItemsAfter: [
-          //     {
-          //       type: 'html',
-          //       value: '<hr style="margin: 0.3rem 0;">',
-          //     },
-          //     {
-          //       href: 'https://github.com/facebook/docusaurus/issues/3526',
-          //       label: 'Help Us Translate',
-          //     },
-          //   ],
-          // },
           {
             href: 'https://github.com/yoloz/yolo-docs',
-            label: 'GitHub',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
             position: 'right',
           },
         ],
@@ -104,7 +96,7 @@ const config = {
       footer: {
         style: 'dark',
         links: [
-          {
+          /* {
             title: 'yolo-docs',
             items: [
               {
@@ -113,23 +105,23 @@ const config = {
               },
             ],
           },
-          // {
-          //   title: 'Community',
-          //   items: [
-          //     {
-          //       label: 'Stack Overflow',
-          //       href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-          //     },
-          //     {
-          //       label: 'Discord',
-          //       href: 'https://discordapp.com/invite/docusaurus',
-          //     },
-          //     {
-          //       label: 'Twitter',
-          //       href: 'https://twitter.com/docusaurus',
-          //     },
-          //   ],
-          // },
+          {
+            title: 'Community',
+            items: [
+              {
+                label: 'Stack Overflow',
+                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              },
+              {
+                label: 'Discord',
+                href: 'https://discordapp.com/invite/docusaurus',
+              },
+              {
+                label: 'Twitter',
+                href: 'https://twitter.com/docusaurus',
+              },
+            ],
+          },
           {
             title: 'More',
             items: [
@@ -142,9 +134,9 @@ const config = {
                 href: 'https://github.com/yoloz/yolo-docs',
               },
             ],
-          },
+          },*/
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} yolo-docs, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} yolo. Built with ❤️ using Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,
