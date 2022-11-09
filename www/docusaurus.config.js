@@ -24,8 +24,8 @@ const config = {
   // to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'zh-CN',
-
-    locales: ['zh-CN', 'en', 'fr', 'pt-BR', 'ko'],
+    locales: ['zh-CN'],
+    // ['en', 'fr', 'pt-BR', 'ko'],
   },
 
   presets: [
@@ -37,15 +37,13 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/yoloz/yolo-docs/tree/docusaurus/',
+          editUrl: 'https://github.com/yoloz/yolo-docs/tree/docusaurus/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/yoloz/yolo-docs/tree/docusaurus/',
+          editUrl: 'https://github.com/yoloz/yolo-docs/tree/docusaurus/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -151,7 +149,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ['java','scala','log','properties'],
+        additionalLanguages: ['java', 'scala', 'log', 'properties'],
       },
     }),
 }
