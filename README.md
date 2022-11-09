@@ -24,7 +24,6 @@ This is a [Docusaurus-powered](https://docusaurus.io) site to document collectio
 | [Modify docusaurus.config.js](https://docusaurus.io/docs/deployment#docusaurusconfigjs-settings)  | Add `organizationName`=user, `projectName`=repo, `deploymentBranch`=gh-pages properties. <br/>Updated `url` property to relevant github.io version for now |
 | [Configure publishing source for GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)| Do an initial manual deploy using `GIT_USER=<GITHUB_USERNAME> GIT_PASS=<GITHUB_PERSONAL_ACCESS_TOKEN> npm run deploy` to setup the GitHub Pages branch. Generate [Personal Tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) if needed. Validate deploy by visiting [https://fearlessly-dev.github.io/30days/](https://fearlessly-dev.github.io/30days/) - then automate deploy using GitHub Actions.|
 | | |
-| | |
 
 <br/>
 
