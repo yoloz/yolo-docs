@@ -8,7 +8,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula')
 const config = {
   title: 'Docs',
   tagline: '好记性不如烂笔头',
-  url: 'https://your-docusaurus-test-site.com',
+  url: 'https://www.ylsite.tk',
+  // github pages "baseUrl = /yolo-docs/"
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
