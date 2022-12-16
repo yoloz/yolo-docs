@@ -66,3 +66,7 @@ passwd: password updated successfully
 root@ubuntu1:~#
 
 ```
+
+## sudo: xxx: command not found
+* 可能命令确实不存在
+* 命令不是二进制文件，sudo会去找二进制文件运行。由于找不到xxx的二进制可执行文件，故报错。 类似的命令有：ulimit,cd
