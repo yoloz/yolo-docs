@@ -32,7 +32,7 @@ $ cat /etc/shells
 
 ## 多用双引号
 
-推荐在使用"\$"来获取变量的时候加上双引号，否则在一些情况下会出现麻烦，如下
+推荐在使用`$`来获取变量的时候加上双引号，否则在一些情况下会出现麻烦，如下
 
 ```bash
 #!/usr/bin/env bash
@@ -141,7 +141,9 @@ log file = /usr/local/logs/rsyncd.log
 log format = %t %m %f %b
 EOF
 ```
+
 :::caution
+
 - HERE 只是一个标识，可以换成任意其他合法字符；
 - 结束的标识符一定要顶格写，前面不能有任何字符, 后面也不能有任何字符，包括空格;
 - 起始的标识符前后空格会被省略；
@@ -175,6 +177,7 @@ echo "$var2"
 ...
 HERE
 ```
+
 :::note
 : 代表什么都不做
 :::
@@ -187,10 +190,10 @@ HERE
 script_dir=$(cd `dirname $0` && pwd)
 script_dir=$(dirname `readlink -f $0` )
 ```
+
 ### readlink
 
 readlink print value of a symbolic link or canonical file name(输出符号链接值或者权威文件名)
-
 
 ```bash
 $ readlink /usr/bin/awk
@@ -201,6 +204,7 @@ $ readlink /etc/alternatives/awk
 $ readlink -f /usr/bin/awk
 #/usr/bin/gawk
 ```
+
 :::note
 -f 递归符号链接, 直到非符号链接的文件位置, 限制是最后必须存在一个非符号链接的文件
 :::
@@ -227,6 +231,7 @@ find . -name "*.txt" |xargs sed -i "s/233/666/g;s/235/626/g;s/333/616/g;s/233/66
 ```bash
 find . -name '*.txt' |xargs -P $(nproc) sed -i "s/233/666/g;s/235/626/g;s/333/616/g;s/233/664/g"
 ```
+
 :::note
 -P 指定并行度，进一步加快执行效率。
 :::
@@ -244,13 +249,14 @@ for((i=0;i<10;i++))do
 done
 wait
 ```
+
 :::caution
 当然，这里并行的次数不能太多，否则机器会卡死。如果图省事可以使用 `parallel` 命令来做，或者是用上面提到的 `xargs` 来处理。
 :::
 
 ## 其他建议
 
-- 使用 func(){}来定义函数，而不是 func{}
-- 使用[[]]来代替[]
-- 使用\$()将命令的结果赋给变量，而不是反引号
-- 使用 printf 代替 echo 进行回显
+- 使用 `func(){}`来定义函数，而不是 `func{}`
+- 使用`[[]]`来代替`[]`
+- 使用`$()`将命令的结果赋给变量，而不是反引号
+- 使用 `printf` 代替 `echo` 进行回显
