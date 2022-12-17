@@ -463,5 +463,5 @@ read -p "请输入第一个参数n1：" n1
 read -p "请输入第二个参数n2：" n2
 
 # 调用 getSum 函数
-getSum $n1 $n2
+getSum
 ```
