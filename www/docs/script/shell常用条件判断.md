@@ -1,10 +1,10 @@
-## 判断文件夹是否存在
+## 判断目录是否存在
 
 ```shell
 if [ -d "/data/" ];then
-  echo "文件夹存在"
+  echo "目录存在"
 else
-  echo "文件夹不存在"
+  echo "目录不存在"
 fi
 ```
 
