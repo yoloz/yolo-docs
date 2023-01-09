@@ -77,7 +77,6 @@ fi
 :::caution
 
 - 注意到等号两边各有一个空格,这是 unix shell 的要求
-
 - 注意到"$test"x最后的x，这是特意安排的，因为当$test 为空的时候，上面的表达式就变成了 x = testx，显然是不相等的。而如果没有这个 x，表达式就会报错：[: =: unary operator expected
 
 :::

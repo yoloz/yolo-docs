@@ -111,3 +111,54 @@ leo:x:503:503::/home/leo:/bin/bash
 root:x:0:0:root:/root:/bin/bash
 #...
 ```
+
+### 词查找
+
+```bash
+#搜索含有 bin 这个词的行
+[root@roclinux ~]# grep bin /etc/passwd
+#这样的搜索结果有一个问题，那就是连 sbin 这样的词也会被搜索出来
+
+#通过使用\<和\>来准确匹配到了 bin 这个词，而 sbin 却被挡在了门外
+[root@roclinux ~]# grep '\<bin\>' /etc/passwd --color
+
+```
+
+grep 中还有一个更加简单的方法来实现对词的搜索,使用`-w`选项来搜索一个词
+
+```bash
+[root@roclinux ~]# grep -w 'bin' /etc/passwd
+```
+
+## 多条件查找
+
+想查找以 root 为行首的或以 bash 为行尾的行，那应该怎么查找呢？这时可以使用 `egrep`。同样的搜索需求，grep 就没有办法满足（除非使用-E 选项）
+
+```bash
+#通过 egrep 命令实现了两个条件的搜索，其中“|”符号表示“或”，连接了两个搜索条件
+[root@roclinux ~]# egrep '^root|bash$' passwd
+root:x:0:0:root:/root:/bin/bash
+#...
+```
+
+:::note
+这就是 grep 和 egrep 的区别了，grep 的正则表达式是基本正则表达式，而 egrep 的正则表达式是扩展正则表达式
+:::
+
+## 特殊字符查找
+
+当我们搜索时，假如搜索字符串中包含了不少特殊字符，而这些特殊字符恰好又是正则表达式预留的字符，比如说“^”、“\$”等，这时，我们就可以使用 `fgrep` 来避免烦琐的转义了,在 fgrep 的眼里，没有特殊字符，都是普通字符,我们来看下面的示例
+
+```bash
+#我们的roc.txt文件中有几个^和$
+[roc@roclinux ~]$ cat roc.txt
+^this third file
+^$this file contain some import infomation.
+
+# grep会尝试去找开头为this的行, 但并未找到
+[roc@roclinux ~]$ grep '^this' roc.txt
+
+# fgrep会老老实实地去找^this字符串, 它找到了
+[roc@roclinux ~]$ fgrep '^this' roc.txt
+^this third file
+```
