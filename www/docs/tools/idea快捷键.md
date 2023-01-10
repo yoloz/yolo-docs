@@ -1,0 +1,7 @@
+- 代码右移：TAB 键
+- 代码左移：shift+TAB 键
+- 代码上移：shift+alt +方向键上
+- 代码下移：shift+alt +方向键下
+- 查找：`Ctrl+f`
+- 后退：`Ctrl+Alt+方向键左`
+- 前进：`Ctrl+Shfit+方向键右`
