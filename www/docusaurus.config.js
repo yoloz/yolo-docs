@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula')
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Docs',
-  tagline: '好记性不如烂笔头',
+  tagline: '路虽远行则将至,事虽难做则必成',
   url: 'https://www.ylsite.tk',
   // github pages "baseUrl = /yolo-docs/"
   baseUrl: '/',
