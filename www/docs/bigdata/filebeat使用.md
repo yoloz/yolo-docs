@@ -165,3 +165,69 @@ The clean_inactive setting must be greater than `ignore_older + scan_frequency` 
 - scan_frequency
 
   How often Filebeat checks for new files in the paths that are specified for harvesting.The default setting is 10s.
+
+## 配置日志
+
+配置文件 filebeat.yml 中的 logging 部分包含用于配置日志记录输出的选项。日志记录系统可用将日志写入 syslog，如果未明确配置日志记录，则使用文件输出。
+
+```log
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
+```
+
+:::note 选项：
+
+- logging.to_syslog
+
+如果为 true，则将所有日志记录输出写入 syslog
+
+- logging.to_eventlog
+
+如果为 true，则将所有日志记录输出写入 windows 事件日志。
+
+- logging.to_files
+
+如果为 true，则将所有日志记录输出写入文件，达到日志文件大小限制时，日志文件会自动限制替换（轮转）。
+
+- logging.level
+
+最低日志级别。debug、info、warning、error。默认日志级别为 info。
+
+- logging.metrics.enabled
+
+如果启动，filebeat 会定期记录上一时期内已更改的内部指标，对于更改的每个度量标准，将记录该期间开头的值的增量，此外，关闭时会记录所有非零内部指标的总值。默认值为 true。
+
+- logging.metrics.period
+
+记录内部指标的时间段。默认值为 30 秒。
+
+- logging.files.path
+
+写入日志文件的目录。默认为日志路径。
+
+- logging.files.name
+
+写入日志的文件的名称。
+
+- logging.files.rotateeverybytes
+
+日志文件的最大大小，如果达到限制，则会生成新的日志文件，默认大小限制为 10M。
+
+- logging.files.permissions
+
+旋转日志文件时要应用的权限掩码。默认值为 0600。
+
+- logging.files.keepfiles
+
+要保留在磁盘上的最新轮换日志文件数。在日志轮换期间删除旧文件。默认值为 7.keepfiles 选项必须在 2 到 1024 个文件的范围。
+
+- logging.json
+
+如果为 true，则以 json 格式记录消息。默认值为 false。
+
+:::
