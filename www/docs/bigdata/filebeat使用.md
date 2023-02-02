@@ -150,12 +150,18 @@ This option is enabled by default. If you disable this option, you must also dis
 
 The `clean_*` options are used to clean up the state entries in the registry file. These settings help to reduce the size of the registry file and can prevent a potential inode reuse issue.
 
+**registry 文件内容修改在下一次使用此文件的时候生效**
+
 - clean_inactive
 
   When this option is enabled, Filebeat removes the state of a file after the specified period of inactivity has elapsed.
 
 :::caution
-The clean_inactive setting must be greater than `ignore_older + scan_frequency` to make sure that no states are removed while a file is still being harvested.
+
+- The clean_inactive setting must be greater than `ignore_older + scan_frequency` to make sure that no states are removed while a file is still being harvested.
+- ignore_older must be enabled when clean_inactive is used.
+- 在测试期间，您可能会注意到注册表包含本应根据 clean_inactive 设置而被删除的状态条目。发生这种情况是因为**Filebeat 直到再次打开注册表以读取其他文件时才删除条目**。如果要测试 clean_inactive 设置，请确保 Filebeat 配置为从多个文件中读取，否则文件状态永远不会从注册表中删除。
+
 :::
 
 - clean_removed
@@ -178,6 +184,7 @@ logging.files:
   name: filebeat
   keepfiles: 7
   permissions: 0644
+logging.metrics.enabled: false
 ```
 
 :::note 选项：
