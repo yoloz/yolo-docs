@@ -1,0 +1,167 @@
+同 logstash，filebeat 默认生成`filebeat-*`的索引以及使用解压目录下的`fields.yml`(二进制压缩包)
+
+## 自定义模板及索引
+
+- 不同的文件生成不同的索引；
+- json 记录展开到最外层，否则 filbeat 会将日志内容放在 msg 里;
+
+```yml
+setup.template.name: custom_name
+setup.template.pattern: custom_name_*
+setup.template.enabled: true
+setup.template.overwrite: true
+setup.template.fields: customFields.yml
+setup.ilm.enabled: false
+processors:
+  - drop_fields:
+      fields: [log, host, input, agent, ecs]
+      ignore_missing: false
+filebeat.inputs:
+  - close_removed: true
+    close_inactive: 5m
+    type: log
+    tags: [t1]
+    clean_removed: true
+    enabled: true
+    json: { keys_under_root: true, overwrite_keys: true }
+    paths: [/data/t1_*]
+  - close_removed: true
+    close_inactive: 5m
+    type: log
+    tags: [t2]
+    clean_removed: true
+    enabled: true
+    json: { keys_under_root: true, overwrite_keys: true }
+    paths: [/data/t2_*]
+output.elasticsearch:
+  indices:
+    - index: custom_name_t1
+      when.contains: { tags: t1 }
+    - when.contains: { tags: t2 }
+      index: custom_name_t2
+  hosts: ['127.0.0.1:9200']
+```
+
+:::info
+
+- setup.template.name 设置一个新的模板，模板的名称
+- setup.template.pattern 模板匹配那些索引
+- setup.template.enabled: false 关掉默认的模板配置
+- setup.template.overwrite: false 是否覆盖现有模板
+- when.contains: 包含
+- json.keys_under_root: true 将 field 展开到最外层(the custom fields are stored as top-level fields in the output document)
+
+:::
+
+自定义模板请查看：[Configuration-template](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-template.html#configuration-template)
+
+文件路径请查看：[Configure project paths](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-path.html#configuration-path)
+
+## 字段定义
+
+类型自定义(默认模板使用的是小于 1024 是 keyword,反之是 text，如果要当作`keyword`使用则是`fieldName.keyword`)
+
+`setup.template.fields: customFields.yml`(路径请查看上述链接)，文件格式如下：
+
+```yml
+- key: custom_name
+  title: custom_name
+  description: >
+    custom fields
+  fields:
+    # some desc
+    - name: t1
+      type: keyword
+    - name: t2
+      type: keyword
+    - name: t3
+      type: ip
+    - name: t4
+      type: integer
+    - name: t5
+      type: ip
+    - name: t6
+      type: integer
+    - name: t7
+      type: ip
+    - name: t8
+      type: text
+    - name: t9
+      type: date
+    - name: t10
+      type: long
+```
+
+## 启动
+
+```bash
+$ ./filebeat -e -c config/customConf.yml
+```
+
+## 采集 Log 配置
+
+registry 是用来记录日志文件的 state 信息，如记录读取到文件位置的的 offset，文件的 inode、modify time 等，如果配置不好会导致此文件越来越大。
+
+- harvester_buffer_size
+
+  The size in bytes of the buffer that each harvester uses when fetching a file. The default is 16384.
+
+- max_bytes
+
+  The maximum number of bytes that a single log message can have. All bytes after max_bytes are discarded and not sent. This setting is especially useful for multiline log messages, which can get large. **The default is 10MB (10485760).**
+
+- ignore_older
+
+  If this option is enabled, Filebeat ignores any files that were modified before the specified timespan. Configuring ignore_older can be especially useful if you keep log files for a long time. For example, if you want to start Filebeat, but only want to send the newest files and files from last week, you can configure this option.
+
+:::caution
+
+- You must set ignore_older to be greater than close_inactive.
+- To remove the state of previously harvested files from the registry file, use the clean_inactive configuration option.
+
+:::
+
+The `close_*` configuration options are used to close the harvester after a certain criteria or time. Closing the harvester means closing the file handler.
+
+- close_inactive
+
+  When this option is enabled, Filebeat closes the file handle if a file has not been harvested for the specified duration.We recommended that you set close_inactive to a value that is larger than the least frequent updates to your log files.
+
+- close_removed
+
+  When this option is enabled, Filebeat closes the harvester when a file is removed. Normally a file should only be removed after it’s inactive for the duration specified by close_inactive.
+
+:::caution
+This option is enabled by default. If you disable this option, you must also disable clean_removed.
+:::
+
+- close_timeout
+
+  When this option is enabled, Filebeat gives every harvester a predefined lifetime. Regardless of where the reader is in the file, reading will stop after the close_timeout period has elapsed.
+
+:::caution
+
+- If you set close_timeout to equal ignore_older, the file will not be picked up if it’s modified while the harvester is closed. This
+  combination of settings normally leads to data loss, and the complete file is not sent.
+
+- This option is set to 0 by default which means it is disabled.
+
+:::
+
+The `clean_*` options are used to clean up the state entries in the registry file. These settings help to reduce the size of the registry file and can prevent a potential inode reuse issue.
+
+- clean_inactive
+
+  When this option is enabled, Filebeat removes the state of a file after the specified period of inactivity has elapsed.
+
+:::caution
+The clean_inactive setting must be greater than `ignore_older + scan_frequency` to make sure that no states are removed while a file is still being harvested.
+:::
+
+- clean_removed
+
+  When this option is enabled, Filebeat cleans files from the registry if they cannot be found on disk anymore under the last known name.
+
+- scan_frequency
+
+  How often Filebeat checks for new files in the paths that are specified for harvesting.The default setting is 10s.
