@@ -112,20 +112,25 @@ registry 是用来记录日志文件的 state 信息，如记录读取到文件�
 
 - ignore_older
 
-  If this option is enabled, Filebeat ignores any files that were modified before the specified timespan. Configuring ignore_older can be especially useful if you keep log files for a long time. For example, if you want to start Filebeat, but only want to send the newest files and files from last week, you can configure this option.
+  If this option is enabled, Filebeat ignores any files that were modified before the specified timespan.
+
+  比如设置为 1h，表示文件时间在 1h 之前的日志都不会被 input 模块搜集，直到有新日志产生。
 
 :::caution
-
-- You must set ignore_older to be greater than close_inactive.
-- To remove the state of previously harvested files from the registry file, use the clean_inactive configuration option.
-
+You must set ignore_older to be greater than close_inactive.
 :::
 
 The `close_*` configuration options are used to close the harvester after a certain criteria or time. Closing the harvester means closing the file handler.
 
 - close_inactive
 
-  When this option is enabled, Filebeat closes the file handle if a file has not been harvested for the specified duration.We recommended that you set close_inactive to a value that is larger than the least frequent updates to your log files.
+  When this option is enabled, Filebeat closes the file handle if a file has not been harvested for the specified duration.
+
+  比如一个日志文件，10 分钟都没有读到新的内容就把文件句柄关闭。这里的时间不是取决于文件的最后更新时间，而是 Filebeat 内部记录的时间，上次读到文件和这次尝试读文件的时间差。官方建议设置的时间是比文件产生数据频率高一个数量级（默认 5m），比如每秒都有日志产生，这个值就可以设置为 1m。
+
+- close_renamed
+
+  是否关闭 rename 的文件
 
 - close_removed
 
@@ -150,15 +155,15 @@ This option is enabled by default. If you disable this option, you must also dis
 
 The `clean_*` options are used to clean up the state entries in the registry file. These settings help to reduce the size of the registry file and can prevent a potential inode reuse issue.
 
-**registry 文件内容修改在下一次使用此文件的时候生效**
+Filebeat 内部记录了很多文件状态，保存在 data/registry/filebeat/log.json。如果不清理的话这个文件会越来越大，影响效率。
 
 - clean_inactive
 
-  When this option is enabled, Filebeat removes the state of a file after the specified period of inactivity has elapsed.
+  多久清理一次注册信息,默认值是 0（不开启）
 
 :::caution
 
-- The clean_inactive setting must be greater than `ignore_older + scan_frequency` to make sure that no states are removed while a file is still being harvested.
+- 清理的文件信息需要保证这个文件已经不活跃了，所以这个值需要大于 ignore_older + scan_frequency,不然的话清理后这个文件又被发现，则会重头开始读取，这样就重了.
 - ignore_older must be enabled when clean_inactive is used.
 - 在测试期间，您可能会注意到注册表包含本应根据 clean_inactive 设置而被删除的状态条目。发生这种情况是因为**Filebeat 直到再次打开注册表以读取其他文件时才删除条目**。如果要测试 clean_inactive 设置，请确保 Filebeat 配置为从多个文件中读取，否则文件状态永远不会从注册表中删除。
 
@@ -166,11 +171,26 @@ The `clean_*` options are used to clean up the state entries in the registry fil
 
 - clean_removed
 
-  When this option is enabled, Filebeat cleans files from the registry if they cannot be found on disk anymore under the last known name.
+  文件被删除后是否清理注册信息，默认开启。需要和 close_removed 值保持一致
 
 - scan_frequency
 
-  How often Filebeat checks for new files in the paths that are specified for harvesting.The default setting is 10s.
+  How often Filebeat checks for new files in the paths that are specified for harvesting.比如设置 10s（默认），一个新文件产生 10s 后会被发现，或者一个旧文件（上面 ignore_older）新产生了一行日志 10s 才发现这个文件。
+
+简单总结几个时间配置：`clean_inactive > ignore_older + scan_frequency > close_inactive`
+
+推荐配置(时间值仅供参考)：
+
+```log
+tail_files: false
+scan_frequency: 10s
+ignore_older: 60m
+close_inactive: 10m
+close_renamed: true
+close_removed: true
+clean_inactive: 70m
+clean_removed: true
+```
 
 ## 配置日志
 
