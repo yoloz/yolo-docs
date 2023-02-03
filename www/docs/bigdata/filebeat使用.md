@@ -98,7 +98,7 @@ output.elasticsearch:
 $ ./filebeat -e -c config/customConf.yml
 ```
 
-## 采集 Log 配置
+## Input Log
 
 registry 是用来记录日志文件的 state 信息，如记录读取到文件位置的的 offset，文件的 inode、modify time 等，如果配置不好会导致此文件越来越大。
 
@@ -155,7 +155,29 @@ This option is enabled by default. If you disable this option, you must also dis
 
 The `clean_*` options are used to clean up the state entries in the registry file. These settings help to reduce the size of the registry file and can prevent a potential inode reuse issue.
 
-Filebeat 内部记录了很多文件状态，保存在 data/registry/filebeat/log.json。如果不清理的话这个文件会越来越大，影响效率。
+Filebeat 内部记录了很多文件状态，记录文件`data/registry/filebeat/log.json`,如果不清理的话状态信息会越来越大，影响效率,文件格式如下：
+
+```log
+{"k":"filebeat::logs::native::656718-64768","v":{"id":"native::656718-64768","offset":3,"timestamp":[2062239044447,1675392123],"identifier_name":"native","prev_id":"","source":"/home/zhds/data/sql_12345","ttl":180000000000,"type":"log","FileStateOS":{"inode":656718,"device":64768}}}
+{"op":"set","id":23}
+{"k":"filebeat::logs::native::656726-64768","v":{"source":"/home/zhds/data/login_12345","ttl":180000000000,"identifier_name":"native","id":"native::656726-64768","prev_id":"","offset":3,"timestamp":[2062238103653,1675392133],"type":"log","FileStateOS":{"inode":656726,"device":64768}}}
+{"op":"set","id":24}
+{"k":"filebeat::logs::native::656719-64768","v":{"offset":3,"type":"log","id":"native::656719-64768","source":"/home/zhds/data/sdk_12345","ttl":180000000000,"FileStateOS":{"inode":656719,"device":64768},"identifier_name":"native","prev_id":"","timestamp":[2062238416514,1675392133]}}
+{"op":"remove","id":25}
+{"k":"filebeat::logs::native::656718-64768"}
+{"op":"remove","id":26}
+{"k":"filebeat::logs::native::656726-64768"}
+{"op":"remove","id":27}
+{"k":"filebeat::logs::native::656719-64768"}
+{"op":"set","id":28}
+{"k":"filebeat::logs::native::656727-64768","v":{"id":"native::656727-64768","prev_id":"","offset":0,"type":"log","source":"/home/zhds/data/sql_12346","timestamp":[2062338936555,1675394343],"ttl":180000000000,"FileStateOS":{"inode":656727,"device":64768},"identifier_name":"native"}}
+{"op":"set","id":29}
+{"k":"filebeat::logs::native::656727-64768","v":{"offset":0,"ttl":180000000000,"type":"log","FileStateOS":{"inode":656727,"device":64768},"identifier_name":"native","id":"native::656727-64768","source":"/home/zhds/data/sql_12346","timestamp":[2062338936555,1675394343],"prev_id":""}}
+```
+
+:::note
+文件是每次操作的信息记录，一直递增，不是纯粹的一个文件状态信息一条记录
+:::
 
 - clean_inactive
 
@@ -182,7 +204,6 @@ Filebeat 内部记录了很多文件状态，保存在 data/registry/filebeat/lo
 推荐配置(时间值仅供参考)：
 
 ```log
-tail_files: false
 scan_frequency: 10s
 ignore_older: 60m
 close_inactive: 10m
@@ -192,7 +213,7 @@ clean_inactive: 70m
 clean_removed: true
 ```
 
-## 配置日志
+## filebeat 日志
 
 配置文件 filebeat.yml 中的 logging 部分包含用于配置日志记录输出的选项。日志记录系统可用将日志写入 syslog，如果未明确配置日志记录，则使用文件输出。
 
@@ -208,6 +229,10 @@ logging.metrics.enabled: false
 ```
 
 :::note 选项：
+
+- logging.to_stderredit
+
+  When true, writes all logging output to standard error output. This is equivalent to using the -e command line option.
 
 - logging.to_syslog
 
