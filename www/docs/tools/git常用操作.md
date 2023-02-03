@@ -2,7 +2,8 @@
 
 ```bash
 git init -b <init-branch>
-git remote add -f origin <repo> git status
+git remote add -f origin <repo> 
+git status
 git add xxxx
 git commit -am ""
 #git config user.email[name]
@@ -31,9 +32,9 @@ git remote add -f origin <repo>
 git config core.sparsecheckout true
 
 # 指定克隆的文件夹(或者文件)
-echo “libs” >> .git/info/sparse-checkout
-echo “apps/register.go” >> .git/info/sparse-checkout
-echo “resource/css” >> .git/info/sparse-checkout
+echo "libs" >> .git/info/sparse-checkout
+echo "apps/register.go" >> .git/info/sparse-checkout
+echo "resource/css" >> .git/info/sparse-checkout
 
 # 拉取远程文件
 git pull origin master
@@ -110,10 +111,10 @@ git checkout thisBranch  #切换thisBranch继续开发
 需要将其他分支的某一次提交合入到本地当前分支上使用`git cherry-pick commitid`
 如果在 git cherry-pick 后加一个分支名，则表示将该分支顶端提交进 cherry-pick 如：`git cherry-pick <branchname>`
 
-- git cherry-pick ..<branchname>和 git cherry-pick ^HEAD <branchname>
+- `git cherry-pick ..<branchname>`和 `git cherry-pick ^HEAD <branchname>`
   以上两个命令作用相同，表示应用所有提交引入的更改，这些提交是 branchname 的祖先但不是 HEAD 的祖先(即当前分支)，比如，现在我的仓库中有三个分支，其提交历史如下图：
 
-```txt
+```log
                C<---D<---E  branch2
               /
 master   A<---B
@@ -125,7 +126,7 @@ master   A<---B
 
 如果我使用`git cherry-pick ..branch2`或者`git cherry-pick ^HEAD branch2`,那么会将属于 branch2 的祖先但不属于 branch3 的祖先的所有提交引入到当前分支 branch3 上，并生成新的提交，执行后的提交历史如下：
 
-```txt
+```log
 
                C<---D<---E  branch2
               /
