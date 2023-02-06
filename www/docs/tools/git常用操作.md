@@ -2,7 +2,7 @@
 
 ```bash
 git init -b <init-branch>
-git remote add -f origin <repo> 
+git remote add -f origin <repo>
 git status
 git add xxxx
 git commit -am ""
@@ -149,18 +149,16 @@ git push origin --tags #标签同步到远程代码库
 git checkout tag_name #切换到tag,只读版本
 git fetch origin tag <tagname> #获取远程tag
 git push origin --delete tag <tagname> #删除远程tag
+#从tag创建新的分支继续开发：git checkout -b 新分支 tag名
+git checkout -b [newbranch] [tabname]
 ```
 
 ## reset
 
 git 撤销操作主要有如下方式:
-撤销上一次提交，并将暂存区文件重新提交 `git commit --amend`;
-拉取暂存区文件替换工作区文件 `git checkout file1 dir1...` ;
-拉取版本库文件到暂存区, 不影响工作区 `git reset HEAD file1 dir1...` ;
 
-> 第一种情况下`--amend`会打开编辑文件(nano 方式)其中快捷键^表示 ctrl, M 表示 alt(linux)\*\*。
-
-meta 键是以前 MIT 计算机键盘上的的一个特殊键
+- 拉取暂存区文件替换工作区文件 `git checkout file1 dir1...` ;
+- 拉取版本库文件到暂存区, 不影响工作区 `git reset HEAD file1 dir1...` ;
 
 ## 更换仓库地址
 
@@ -211,7 +209,9 @@ fatal: refusing to merge unrelated histories 添加
 
 ## 修改 commit
 
-合并多个 commit 为一个完整 commit, 或者多分支合并时去除被合并分支的一些 commit
+- 修改最近的一次 commit log，直接使用命令 `git commit --amend` 就可以完成修改啦
+
+- 合并多个 commit 为一个完整 commit, 或者多分支合并时去除被合并分支的一些 commit
 
 ```bash
 git log
