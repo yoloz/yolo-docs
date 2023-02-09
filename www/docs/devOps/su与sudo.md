@@ -68,5 +68,37 @@ root@ubuntu1:~#
 ```
 
 ## sudo: xxx: command not found
-* 可能命令确实不存在
-* 命令不是二进制文件，sudo会去找二进制文件运行。由于找不到xxx的二进制可执行文件，故报错。 类似的命令有：ulimit,cd
+
+- 可能命令确实不存在
+- 命令不是二进制文件，sudo 会去找二进制文件运行。由于找不到 xxx 的二进制可执行文件，故报错。 类似的命令有：ulimit,cd
+
+## sudo echo ＞＞提示权限不够的解决办法
+
+Linux 中使用“sudo echo >>”提示权限不够
+
+```bash
+sudo echo "export PATH" >> /etc/profile
+bash: /etc/profile: Permission denied
+```
+
+bash 拒绝说权限不够。这是因为重定向符号 “>” 和 “>>” 也是 bash 的命令。sudo 只是让 echo 命令具有了 root 权限，但是没有让 “>” 和 “>>” 命令也具有 root 权限，所以 bash 会认为这两个命令都没有写入信息的权限。
+
+解决方法一：
+利用 “sh -c” 命令，它可以让 bash 将一个字串作为完整的命令来执行，这样就可以将 sudo 的影响范围扩展到整条命令。具体用法如下：
+
+```bash
+sudo sh -c ‘echo "PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin/" >> /etc/profile’
+sudo sh -c ‘echo "export PATH" >> /etc/profile’
+```
+
+解决方法二：
+利用管道和 tee 命令，该命令可以从标准输入中读入信息并将其写入标准输出或文件中，具体用法如下：
+
+```bash
+echo “PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin/” | sudo tee -a /etc/profile
+echo “export PATH” | sudo tee -a /etc/profile
+```
+
+:::caution
+tee 命令 “-a” 选项的作用等同于 “>>” 命令，如果去除该选项，那么 tee 命令的作用就等同于 “>” 命令。
+:::
