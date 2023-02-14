@@ -113,6 +113,14 @@ UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
 
 ## 删除
 
+:::tip
+
+- sed 所谓的删除都是在模式空间中执行的，不会真正改动原文件;
+- 如果需要对源文件进行替换，则加入-i 参数即可,命令`sed -i "/pattern/d" log.txt`；
+- 如果删除没有效果，可以查看一下文件编码[《转换文件编码iconv》](./转换文件编码iconv.md);
+
+:::
+
 ### 删除某一行
 
 ```bash
