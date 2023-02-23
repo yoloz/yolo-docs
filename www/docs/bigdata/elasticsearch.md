@@ -33,12 +33,7 @@ Linux 操作系统云服务器中限制资源使用的配置文件是/etc/securi
    UsePAM yes 选项开启后，表示启用 pam 模块，在/etc/pam.d/sshd 中默认已存在一项 session include password-auth 配置，include 表示需要通过 password-auth 模块认证。
    :::
 
-2. 检查/etc/pam.d/system-auth 中是否存在 session required pam_limits.so 这一项,表示使用/etc/security/limits.conf 这个配置
-   :::note
-   此配置文件可能不存在，不存在则忽略;
-   :::
-
-3. 检查/etc/pam.d/login 中是否存在 session required pam_limits.so 这一项，表示使用/etc/security/limits.conf 这个配置
+2. 检查/etc/pam.d/login,/etc/pam.d/su,/etc/pam.d/sshd 中是否存在 session required pam_limits.so 这一项，表示使用/etc/security/limits.conf 这个配置
    :::note
    一般这一项都存在
    :::
