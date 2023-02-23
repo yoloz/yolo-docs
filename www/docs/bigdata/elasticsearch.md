@@ -6,9 +6,9 @@
 - 永久性解决：
 
 ```shell
-# 在root用户下追加配置
 vim /etc/security/limits.conf
 # 配置内容   *表示所有用户生效
+# ubuntu的root用户在某些版本下需要单独写
 * soft nofile 65536
 * hard nofile 65536
 
@@ -19,10 +19,44 @@ ulimit  -H -n
 ```
 
 :::caution 注意
-Linux 操作系统云服务器中限制资源使用的配置文件是/etc/security/limits.conf 和/etc/security/limits.d/目录，/etc/security/limits.d/目录中的配置优先级高于/etc/security/limits.conf 的配置。
 
-如果修改/etc/security/limits.conf 文件，重启后不生效，则可能是由于 limits.conf 中的修改被/etc/security/limits.d/目录中配置项的值所覆盖,请检查/etc/security/limits.d/目录中配置项的值。
+Linux 操作系统云服务器中限制资源使用的配置文件是/etc/security/limits.conf 和/etc/security/limits.d/目录，/etc/security/limits.d/目录中的配置优先级高于/etc/security/limits.conf 的配置，注意不要冲突，一般 limits.d 目录为空。
+
 :::
+
+### 重启不生效问题
+
+排除上述的可能配置冲突问题，则如下排查：
+
+1. 检查/etc/ssh/sshd_config 中`UsePAM yes`选项是否开启
+   :::note
+   UsePAM yes 选项开启后，表示启用 pam 模块，在/etc/pam.d/sshd 中默认已存在一项 session include password-auth 配置，include 表示需要通过 password-auth 模块认证。
+   :::
+
+2. 检查/etc/pam.d/system-auth 中是否存在 session required pam_limits.so 这一项,表示使用/etc/security/limits.conf 这个配置
+   :::note
+   此配置文件可能不存在，不存在则忽略;
+   :::
+
+3. 检查/etc/pam.d/login 中是否存在 session required pam_limits.so 这一项，表示使用/etc/security/limits.conf 这个配置
+   :::note
+   一般这一项都存在
+   :::
+
+:::caution
+重启或者重新登录后仍未生效，则逐个排查/etc/pam.d 下相关连的文件是否将 session required pam_limits.so 这一下项注释或删除了
+:::
+
+### 操作系统参数
+
+另外影响最大打开文件句柄数量的还有/etc/sysctl.conf 文件的配置：
+
+```log
+fs.file-max = 102400 #内核可分配的最大文件数
+fs.nr_open = 1048576 #单个进程可分配的最大文件数
+fs.inotify.max_user_instances = 65535 #每个用户最大可创建inotify instances数量
+fs.inotify.max_user_watches = 102400 #每个用户可同时添加的watch数量
+```
 
 ## max threads number
 
