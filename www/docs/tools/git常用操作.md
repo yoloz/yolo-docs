@@ -196,11 +196,11 @@ git remote -v
 #def https://gitee.com/user/def.git (push)
 #origin https://github.com/yoloz/abc.git (fetch)
 #origin https://github.com/yoloz/abc.git (push)
-git pull def master:def  #pull def中的master分支到本地def分支
+git pull def master:def1  #pull def中的master分支到本地def1分支
 #报错refusing to merge unrelated histories，后面添加选项--allow-unrelated-history
-git checkout def #change branch to def
-git merge master [--allow-unrelated-history] #拷贝本地master分支到本地def分支中
-git push def def:master  #push 本地def分支到def中的master分支
+git checkout def1 #change branch to def1
+git merge master [--allow-unrelated-history] #拷贝本地master分支到本地def1分支中
+git push def1 def:master  #push 本地def1分支到def中的master分支
 ```
 
 fatal: refusing to merge unrelated histories 添加
