@@ -64,3 +64,8 @@ set global validate_password_special_char_count =0;
 :::info
 mysql 启动失败看日志：/var/log/mysqld.log
 :::
+
+## Public Key Retrieval is not allowed
+
+- url 中添加 allowPublicKeyRetrieval=true;
+- 工具上在属性里将此选项设为 true;

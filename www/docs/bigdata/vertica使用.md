@@ -161,6 +161,14 @@ dbadmin@vertica:/home/zhds$ /opt/vertica/bin/adminTools
 
 ```
 
+:::tip
+数据库切换以及启动可以通过：bin/adminTools 图形界面操作，用户切换到 vertica 的用户。
+:::
+
+## Projection row size (64032161) exceeds MaxRowSize (32768000)
+
+表结构定义中各列的大小定义超过行的最大值
+
 ## Querying Structs
 
 In queries, ROW columns are shown in output using JSON format. In the following example,
