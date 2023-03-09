@@ -104,7 +104,7 @@ VG UUID              d17e3c31-e2c9-4f11-809c-94a549bc43b7
 :::
 
 ```bash
-$ vgextend vg01 /dev/sda
+$ sudo vgextend vg01 /dev/sda
 Volume group "vg01" successfully extended
 ```
 
