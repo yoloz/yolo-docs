@@ -99,6 +99,9 @@ VG UUID              d17e3c31-e2c9-4f11-809c-94a549bc43b7
 ### 扩展卷组(VG)
 
 如果 VG 没有空间，可以使用`vgextend`命令在现有的卷组（VG）中添加一个新的物理卷：`vgextend [已有卷组名] [物理卷名]`
+:::tip
+扩展卷组前提是下层物理卷(PV)还有可分配的,使用`pvdisplay`查看，如果已经使用完则需要先提供存储设备再扩展。
+:::
 
 ```bash
 $ vgextend vg01 /dev/sda
