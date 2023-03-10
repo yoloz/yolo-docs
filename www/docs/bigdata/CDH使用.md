@@ -136,14 +136,7 @@ $ sudo chmod 644 $JAVA_HOME/jre/lib/security/jssecacerts
 重启 Cloudera Management Service 服务:登录 Cloudera Manager Admin Console(会自动以 https 跳到 7183 端口),进入 Cloudera Management Service > 操作 > 重新启动
 
 :::note
-如果 Host Monitor 和 Service Monitor 等角色无法连接到 Cloudera Manager Server，可能需要手动指定 SSL Truststore 属性：
-
-登录 Cloudera Manager Admin Console 并转到 Cloudera Management Service 服务，配置 > 范围 > Cloudera Management Service(服务范围)，然后选择 类别 > 安全性
-
-1. TLS/SSL 客户端 Truststore 文件位置：`/usr/java/jdk1.7.0_67-cloudera/jre/lib/security/jssecacerts`;
-2. Cloudera Manager Server TLS/SSL 证书信任存储库密码：`changeit`;
-3. 保存更改;
-
+Host Monitor 和 Service Monitor 角色日志：`/var/log/cloudera-scm-firehose/mgmt-cmf-mgmt-HOSTMONITOR-cdh160.log.out`，`/var/log/cloudera-scm-firehose/mgmt-cmf-mgmt-SERVICEMONITOR-cdh160.log.out`
 :::
 
 ### Cloudera Manager Agents 配置 TLS
@@ -152,6 +145,18 @@ $ sudo chmod 644 $JAVA_HOME/jre/lib/security/jssecacerts
 2. 修改各 agent 的配置文件`/etc/cloudera-scm-agent/config.ini`，将`use_tls`配置为 1(包括 service 这台节点);
 3. service 节点执行`sudo service cloudera-scm-server restart`;
 4. 每个节点执行`sudo service cloudera-scm-agent restart`;
+
+:::caution
+查看日志`/var/log/cloudera-scm-agent/cloudera-scm-agent.log`可以发现
+
+```log
+WrongHost: Peer certificate commonName does not match host, expected 192.168.124.160, got cdh160
+```
+
+1. 检查 DNS 和 /etc/hosts 文件配置是否正确
+2. 配置文件`/etc/cloudera-scm-agent/config.ini` 的 SERVER_HOST 值将 IP 地址改成主机名(重启)
+
+:::
 
 ## 问题
 
