@@ -40,6 +40,119 @@ sudo vim /etc/sudoers
 正常后会有各组件配置过期告警(地址变更)，重启组件应用新配置即可。
 :::
 
+## 角色调整
+
+在 Cloudera Manager 安装 CDH 的过程中，最初的主机角色配置不够恰当，那之后在使用 CDH 的过程中，可以重新配置主机角色
+
+查阅官方文档：[Role Instances | 5.7.x | Cloudera Documentation](https://docs.cloudera.com/documentation/enterprise/5-7-x/topics/cm_mc_role_instances.html#cmug_topic_5_2__section_nsf_xnw_ym)
+
+1. 首先在主页点击各组件(如 Impala);
+2. 点击 Impala 的实例导航，可以看到各节点所安装的服务；
+
+- 选择服务，先停止，然后删除；
+- 选择添加角色实例，可以给节点安装具体服务，然后启动；
+
+## 配置 1 级 TLS
+
+**常规警告： 为 CDH 群集启用 Kerberos 时，Cloudera 建议至少是 1 级 TLS。**
+
+官网：[Configuring TLS Security for Cloudera Manager](https://docs.cloudera.com/documentation/enterprise/5-2-x/topics/cm_sg_config_tls_security.html)
+
+更具体：[Cloudera Manager 配置 TLS 加密](https://blog.csdn.net/weixin_43215250/article/details/83307894)
+
+生成证书：
+
+- 公共 CA 签名证书，此类证书由公共证书颁发机构（CA）（如 Symantec 或 Comodo）签名。
+- 内部 CA 签名证书，此类证书由您组织的内部 CA 签名。
+- 自签名证书，自签名证书可用于非生产部署，例如概念验证设置。
+
+下面使用自签名证书进行 TLS(测试环境)
+
+### Cloudera Management Service 节点证书
+
+1. JDK 环境准备：
+
+```bash
+$ export JAVA_HOME=/usr/java/jdk1.7.0_67-cloudera
+$ export PATH=$JAVA_HOME/bin:$PATH
+```
+
+2. 创建证书的目录
+
+```bash
+$ sudo mkdir -p /opt/cloudera/security/jks/
+$ sudo chmod 777 /opt/cloudera/security/jks/
+```
+
+3. 生成密钥和自签名证书
+
+```bash
+#keypass must be set to the same password value as storepass for Cloudera Manager to be able to access the keystore
+#keypass or storepass must be changeit, keystore will import to jdk certs(this pass is default changeit)
+#CN这么定义是因为cloudera service 内部会有：https://hostname:7183 请求
+$ keytool -genkeypair -alias cdh -keyalg RSA -keysize 2048 -keystore /opt/cloudera/security/jks/cdh-keystore.jks -dname  "CN=$(hostname -f),OU=xx,O=xx,L=xx,ST=xx,C=CN"
+```
+
+:::tip
+`keytool xxxx -ext san=dns:$(hostname -f)`:
+SAN(Subject Alternative Name) 是 SSL 标准 x509 中定义的一个扩展。使用了 SAN 字段的 SSL 证书，可以扩展此证书支持的域名，使得一个证书可以支持多个不同域名的解析。
+:::
+
+4. 复制默认 Java 信任库（cacerts 中）到备用系统信任库（jssecacerts）
+
+```bash
+$ sudo cp $JAVA_HOME/jre/lib/security/cacerts $JAVA_HOME/jre/lib/security/jssecacerts
+```
+
+5. 从密钥库中导出证书
+
+```bash
+#keystore password输入签名证书的keypass
+$ keytool -export -alias cdh -keystore /opt/cloudera/security/jks/cdh-keystore.jks -rfc -file /opt/cloudera/security/jks/cdh.cer
+```
+
+6. 将公钥导入 Java 信任库(jssecacerts)
+
+这台机器上用 Java 运行的任何进程都会信任该密钥,Java 信任库的默认密码是 changeit(步骤 2 中为密钥库创建的密码设置为 changeit)
+
+```bash
+$ sudo chmod 777 $JAVA_HOME/jre/lib/security/jssecacerts
+#keystore password changeit
+$ keytool -import -alias cdh -file /opt/cloudera/security/jks/cdh.cer -keystore $JAVA_HOME/jre/lib/security/jssecacerts
+$ sudo chmod 644 $JAVA_HOME/jre/lib/security/jssecacerts
+```
+
+### Cloudera Manager Admin Console 配置 TLS
+
+登录 Cloudera Manager Admin Console， 选择管理 > 设置 > 安全性
+
+1. 对 Admin Console 使用 TLS 加密(勾选)；
+2. Cloudera Manager TLS/SSL 服务器 JKS Keystore 文件位置：`/opt/cloudera/security/jks/cdh-keystore.jks`；
+3. Cloudera Manager TLS/SSL 服务器 JKS Keystore 文件密码：`changeit`;
+4. 保存更改;
+
+重启 Cloudera Manager`sudo service cloudera-scm-server restart`
+
+重启 Cloudera Management Service 服务:登录 Cloudera Manager Admin Console(会自动以 https 跳到 7183 端口),进入 Cloudera Management Service > 操作 > 重新启动
+
+:::note
+如果 Host Monitor 和 Service Monitor 等角色无法连接到 Cloudera Manager Server，可能需要手动指定 SSL Truststore 属性：
+
+登录 Cloudera Manager Admin Console 并转到 Cloudera Management Service 服务，配置 > 范围 > Cloudera Management Service(服务范围)，然后选择 类别 > 安全性
+
+1. TLS/SSL 客户端 Truststore 文件位置：`/usr/java/jdk1.7.0_67-cloudera/jre/lib/security/jssecacerts`;
+2. Cloudera Manager Server TLS/SSL 证书信任存储库密码：`changeit`;
+3. 保存更改;
+
+:::
+
+### Cloudera Manager Agents 配置 TLS
+
+1. 登录 Cloudera Manager Admin Console > 管理 > 设置 > 安全性，勾选为代理使用 TLS 加密，并保存;
+2. 修改各 agent 的配置文件`/etc/cloudera-scm-agent/config.ini`，将`use_tls`配置为 1(包括 service 这台节点);
+3. service 节点执行`sudo service cloudera-scm-server restart`;
+4. 每个节点执行`sudo service cloudera-scm-agent restart`;
+
 ## 问题
 
 ### 无法接收 Agent 发出的检测信号
