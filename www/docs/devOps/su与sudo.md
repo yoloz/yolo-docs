@@ -16,9 +16,36 @@ sudo 命令不会将用户帐户切换为 root 用户，在大多数情况下，
 
 ## su
 
-su 命令能够将非 root 用户提权到 root 权限。事实上，能让非 root 用户成为 root 用户。唯一的要求是用户知道 root 密码。
+su(switch user)命令用于切换使用者身份，需要键入该使用者的密码。
 
-su 命令所提供的提权没有时间限制。用户可以作为 root 执行命令，不需要进行重新验证是否有 root 权限。完成任务后，用户可以执行退出命令 exit，从 root 用户恢复到自己原来的非 root 帐户。
+### 语法
+
+```bash
+su [-fmp] [-c command] [-s shell] [--help] [--version] [-] [USER [ARG]]
+```
+
+:::info
+
+- -f 或 --fast 不必读启动档（如 csh.cshrc 等），仅用于 csh 或 tcsh
+- -m -p 或 --preserve-environment 执行 su 时不改变环境变数
+- -c command 或 --command=command 变更为帐号为 USER 的使用者并执行指令（command）后再变回原来使用者
+- -s shell 或 --shell=shell 指定要执行的 shell （bash csh tcsh 等），预设值为 /etc/passwd 内的该使用者（USER） shell
+- \-或-l 或 --login 这个参数加了之后，就好像是重新 login 为该使用者一样，大部份环境变数（HOME SHELL USER 等等）都是以该使用者（USER）为主，并且工作目录也会改变，如果没有指定 USER ，内定是 root
+- USER 欲变更的使用者帐号
+- ARG 传入新的 shell 参数
+
+:::
+
+### 实例
+
+```bash
+#变更帐号为 root 并在执行 ls 指令后退出变回原使用者
+$ su -c ls root
+#变更帐号为 clsung 并改变工作目录至 clsung 的家目录,没有时间限制,执行退出命令exit回到原来账户
+$ su - clsung
+#使用zhds账户启动es
+$ su -c "es/bin/elasticsearch -d" zhds
+```
 
 ## 绕过 root 被锁定
 
