@@ -1,4 +1,4 @@
-## 单机
+## 单机安装
 
 **Requirements:jdk, hadoop**
 
@@ -98,3 +98,14 @@ $HADOOP_HOME/sbin/hadoop-daemon.sh start namenode
 $HADOOP_HOME/sbin/hadoop-daemon.sh start secondarynamenode
 $HADOOP_HOME/sbin/hadoop-daemon.sh start datanode
 ```
+
+## HiveServer1 和 HiveServer2
+
+HiveServer 是建立在 Apache ThriftTM（http://thrift.apache.org/） 之上的，因此有时会被称为 Thrift Server，这可能会导致混乱，因为新服务 HiveServer2 也是建立在 Thrift 之上的．自从引入 HiveServer2 后，HiveServer 也被称为 HiveServer1
+:::info
+HiveServer 无法处理来自多个客户端的并发请求.这实际上是 HiveServer 导出的 Thrift 接口所施加的限制，也不能通过修改 HiveServer 源代码来解决。
+
+HiveServer2 对 HiveServer 进行了重写，来解决这些问题，从 Hive 0.11.0 版本开始,建议使用 HiveServer2。
+
+从 Hive1.0.0 版本（以前称为 0.14.1 版本）开始，HiveServer 开始被删除,请切换到 HiveServer2。
+:::
