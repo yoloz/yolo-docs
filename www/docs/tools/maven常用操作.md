@@ -35,3 +35,16 @@
     </configuration>
 </plugin>
 ```
+
+## springboot打包本地jar
+
+spring boot打包将<scope>system</scope>的jar包含进去:
+```xml
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <configuration>
+        <includeSystemScope>true</includeSystemScope>
+    </configuration>
+</plugin>
+```            
