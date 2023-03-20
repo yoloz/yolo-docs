@@ -12,6 +12,8 @@ Kerberos 是一种流行的身份验证协议，可用于单点登录 （SSO）�
 Kerberos 有许多实现，目前我们常用的是 MIT krb5(1980 年麻省理工学院开发了 Kerberos 来保护 Athena 项目提供的网络服务,当前版本为第 5 版)
 :::
 
+[MIT Kerberos Documentation](http://web.mit.edu/kerberos/krb5-current/doc/mitK5features.html)
+
 ### 解决问题
 
 在单机系统上，可以使用密钥或密码来证明用户的身份，但在分布式计算机网络系统上，如果使用密码或密钥来认证，则需要将密码或密钥通过网络从一台机器传输到另一台机器。例如，如果用户从服务器请求私有文件，则该用户需要将其密钥发送到服务器以对其进行身份验证。因为该密码是标识用户的唯一机密信息，所以网络中任何知道用户密码的人都可以作为该用户访问其文件。因此，有必要防止任何人拦截或窃听传输的密码。此外，有必要提供一种在用户请求服务时对用户进行身份验证的方法，用户必须证明自己的身份。
@@ -26,7 +28,7 @@ principal 主要由三部分构成：primary，instance(可选) 和 realm。包�
 - 部署在 foo.yunzhisec.com 节点的 hiverserver2 的 principal:`hiverserver2/foo.yunzhisec.com@EXAMPLE.COM`(primary/instance@realm)
 - 用户 test:`test@EXAMPLE.COM`(primary@realm)
 
-keytab：包含了多个 principal 与密码的文件，用户可以利用该文件进行身份认证；
+keytab：keytab 是包含 principal(可多个)和加密 principal key 的文件，keytab 文件对于每个 host 是唯一的，因为 key 中包含 hostname。
 
 Ticket Cache：客户端与 KDC 交互完成后，包含身份认证信息的文件，短期有效，需要不断 renew;
 
@@ -55,10 +57,10 @@ Kerberos 主要由三个部分组成：Key Distribution Center (即 KDC)、客�
   - Each KDC contains its own copy of the Kerberos database. The master KDC contains the primary copy of the database, which it propagates at regular intervals to the slave KDCs.
 - Access tools
   Tools used to access the Kerberos information are:
-  - kadmin - Used for reading or updating the Kerberos registry.
-  - kinit - Creates credentials for a user.
-  - klist - Displays the existing credentials for a user.
-  - kdestroy - Deletes a user’s credentials.
+  - kadmin - Used for reading or updating the Kerberos registry(管理员命令行).
+  - kinit - Creates credentials for a user(用户登陆).
+  - klist - Displays the existing credentials for a user(列出当前账号信息).
+  - kdestroy - Deletes a user’s credentials(销毁登录信息).
   - kpasswd - Changes a user’s Kerberos password.
   - kdb5_util - Dumps or loads the Kerberos database for save and restore operations.
 
@@ -68,6 +70,19 @@ Kerberos 主要由三个部分组成：Key Distribution Center (即 KDC)、客�
 - Authentication Service：
 
 ## 认证流程
+
+开启安全认证后的认证方式有两种：
+
+- 使用密码认证
+  使用用户密码通过 kinit 认证， 获取到的 TGT 存在本地凭证缓存当中， 供后续访问服务认证使用，一般在交互式访问中使用。
+- 使用 keytab 认证
+  用户通过导出的 keytab 可以免密码进行用户认证(后续步骤一致)，一般在应用程序中配置使用。
+
+Kerberos 的认证过程可细分为三个阶段：初始验证、获取服务票据和服务验证：
+
+1. 客户端向 KDC 中的 AS 发送用户信息，以及请求 TGT;
+2. 客户端拿到之前获得的 TGT 向 KDC 中的 TGS 请求访问某个服务的票据;
+3. 拿到票据(Ticket)后再到该服务的提供端验证身份，然后使用建立的加密通道(后续的通信采用 session key 加密，就好像客户端与服务端建立一个加密通道)和服务通信;
 
 假设上述`Service x`是一个 http 服务，认证过程如下：
 

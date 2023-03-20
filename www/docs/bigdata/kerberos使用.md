@@ -1,11 +1,13 @@
 ## kadmin
 
+进入管理员命令行
+
 :::info kadmin[.local]
 何时使用 kadmin.local 和 kadmin
-创建 Kerberos 主体和 Keytab 时，可以使用 kadmin.local 或 kadmin，具体取决于您的访问权限和帐户：
+创建 Kerberos 主体和 Keytab 时，可以使用 kadmin.local(需要在 KDC server 上面操作) 或 kadmin(可以在任何一台 KDC 领域的系统上面操作)，具体取决于您的访问权限和帐户：
 
-- 如果您对 KDC 机器具有 root 用户访问权限，但您没有 Kerberos 管理员帐户，请使用 kadmin.local;
-- 如果您对 KDC 机器不具有 root 用户访问权限，但您拥有 Kerberos 管理员帐户，请使用 kadmin;
+- 如果您对 KDC 机器具有 root 用户访问权限，但您没有 Kerberos 管理员帐户，可以使用 kadmin.local;
+- 如果您对 KDC 机器不具有 root 用户访问权限，但您拥有 Kerberos 管理员帐户，可以使用 kadmin;
 - 如果您同时拥有 KDC 机器的 root 用户访问权限和 Kerberos 管理员帐户，则可以使用其中任何一个;
 
 :::
@@ -61,8 +63,8 @@ KVNO Timestamp         Principal
 - 上述的添加(`addprinc`)是此时缓存了`zhds/admin`，实际是`kadmin -p zhds/admin -q "list_principals"`；
 - 科学的用法使用`kadmin`时携带 principal,即：`kadmin -p kadmin/admin -q "list_principals"`
   > Couldn't open log file /var/log/kadmind.log: Permission denied  
-  > Authenticating as principal admin/admin with password.  
-  > Password for admin/admin@ZHDS.CO:
+  > Authenticating as principal kadmin/admin with password.  
+  > Password for kadmin/admin@ZHDS.CO:
 - 如果 principal 的密码忘记
   ```bash
   [zhds@cdh160 ~]$ sudo kadmin.local
@@ -77,7 +79,28 @@ KVNO Timestamp         Principal
 
 :::
 
+### kadmin 的 acl 配置
+
+管理员主体需要具有适当的访问控制列表 （ACL） 权限。权限在 `/etc/krb5kdc/kadm5.acl`或`/var/kerberos/krb5kdc/kadm5.acl` 文件中配置：
+
+```log
+kadmin/admin@ZHDS.CO        *
+#或者通用的
+*/admin@ZHDS.CO        *
+```
+
+:::note
+
+- The above will grant all privileges to any admin instance of a principal.
+- 修改后需要重启 kdc 服务生效
+
+:::
+
 ## 生成 keytab 配置文件
+
+:::info
+下文中的命令工具里的参数是 principal(如：kadmin/admin,yoloz,test 等,系统里配置了 realm 简写的，也可以写成全名称),详情可见[kerberos 了解](./kerberos了解.md)里的概念说明。
+:::
 
 1. 进入 Kerberos 的 admin 客户端；
 
@@ -96,7 +119,7 @@ delete_principal, delprinc
 #...
 ```
 
-2. 在 Kerberos 客户端，执行如下命令，将具有 Hive 访问权限的 yoloz 用户添加到密钥分发中心（KDC），并查看是否添加成功
+2. 在 Kerberos 客户端，执行如下命令，将具有 Hive 访问权限的 hive/cdh162 用户添加到密钥分发中心（KDC），并查看是否添加成功
 
 ```bash
 #将具有Hive访问权限的test用户添加到KDC中
@@ -121,11 +144,17 @@ Entry for principal yoloz@ZHDS.CO with kvno 2, encryption type aes256-cts-hmac-s
 #...
 ```
 
+:::caution
+上述生成的 keytab 文件，可能密码会被改变，即使用`kinit -kt test.keytab test`没有问题，但是直接`kinit test`让输入密码的时候密码不是先前设置的。需要在生成文件的时候添加参数-norandkey，即`ktadd -k /home/zhds/yoloz.keytab -norandkey -glob yoloz`
+:::
+
 ## kerberos 客户端
 
 cdh 启用 kerberos 后，如果我们需要本地连 impala 或者 hive(本地代码测试或者 jdbc 工具)，都需要在本地装 kerberos。
 
 如果别的服务器需要通过 jdbc 访问 cdh 的服务，也需要安装 kerberos 客户端。
+
+环境变量`KRB5CCNAME`非必要(linux 已验证)
 
 ### window
 
@@ -157,6 +186,7 @@ KRB5CCNAME=C:\picc\krb5cache
 ### linux
 
 [ubuntu kerberos](https://ubuntu.com/server/docs/kerberos-introduction)
+
 [redhat kerberos](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system-level_authentication_guide/using_kerberos)
 
 ```bash
@@ -183,6 +213,7 @@ $ sudo apt install krb5-user
 修改/etc/hosts，将 cdh 所有节点的 ip 主机名都添加进来,然后使用 kinit 命令，缓存 principal 和 keytab 文件，并使用 klist 命令，查看是否缓存成功
 
 ```bash
+# kinit -kt [keytab file] [principal]
 $ kinit -kt /tmp/test.keytab test
 # 查看是否缓存成功
 $ klist
@@ -191,4 +222,40 @@ Default principal: test@ZHDS.CO
 
 Valid starting       Expires              Service principal
 03/18/2023 15:02:33  03/19/2023 15:02:33  krbtgt/ZHDS.CO@ZHDS.CO
+```
+
+## cache 文件及验证
+
+The new user principal can be tested using the kinit utility:
+
+```bash
+$ kinit ubuntu/admin
+Password for ubuntu/admin@EXAMPLE.COM:
+#After entering the password, use the klist(列出当前账号信息) utility to view information about the Ticket Granting Ticket (TGT):
+$ klist
+Ticket cache: FILE:/tmp/krb5cc_1000
+Default principal: ubuntu/admin@EXAMPLE.COM
+
+Valid starting     Expires            Service principal
+04/03/20 19:16:57  04/04/20 05:16:57  krbtgt/EXAMPLE.COM@EXAMPLE.COM
+        renew until 04/04/20 19:16:55
+```
+
+:::note
+
+- Where the cache filename `krb5cc_1000` is composed of the prefix `krb5cc_` and the user id (uid), which in this case is 1000.
+- kinit(用户登录) will inspect /etc/krb5.conf to find out which KDC to contact, and its address.
+- kdestroy(销毁登录信息),销毁后执行 klist:`klist: No credentials cache found (filename: /tmp/krb5cc_1000)`
+
+:::
+
+A very quick and useful way to troubleshoot what kinit is doing is to set the environment variable `KRB5_TRACE` to a file, or stderr, and it will show extra information. The output is quite verbose:
+
+```bash
+$ KRB5_TRACE=/dev/stderr kinit ubuntu/admin
+[2898] 1585941845.278578: Getting initial credentials for ubuntu/admin@EXAMPLE.COM
+[2898] 1585941845.278580: Sending unauthenticated request
+[2898] 1585941845.278581: Sending request (189 bytes) to EXAMPLE.COM
+[2898] 1585941845.278582: Resolving hostname kdc01.example.com
+#...
 ```
