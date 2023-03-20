@@ -158,6 +158,8 @@ Keytab 中的 user/host@realm 与尝试进行身份验证的 principal `hive/cdh
 
 :::note
 实际是匹配的(一番折腾，有效的操作：1. 将 Hue,Impala,Ooze 启动了(先前关闭);2. 通过页面 Hue 查询了 hive; 2. 将 cloudera-scm-agent 重启了)，然后执行就好了。
+
+事后才想起来可以查看 trace 信息：`KRB5_TRACE=/dev/stderr kinit -kt hive.keytab hive/cdh162`，暂时无环境测试。
 :::
 
 查看 CDH 集群的角色日志，错误信息如下：
