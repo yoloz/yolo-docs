@@ -40,7 +40,7 @@
 </property>
 <property>
 <name>hive.metastore.warehouse.dir</name>
-<value>/user/hive/warehouse</value>
+<value>$HIVE_HOME/warehouse</value>
 <description>hive表在hdfs的位置</description>
 </property>
 </configuration>
@@ -60,35 +60,40 @@ $HIVE_HOME/bin/schematool -dbType <db type> -initSchema  # use "derby" as db typ
 
 ### 启动
 
-```bash
+```log
 $HIVE_HOME/bin/hiveserver2 &  #"&" 表示后台运行
 $HIVE_HOME/bin/beeline
-# beeline> !connect jdbc:hive2://localhost:10000/default
-# Connecting to jdbc:hive2://localhost:10000/default
-# Enter username for jdbc:hive2://localhost:10000/default:(直接回车)
-# Enter password for jdbc:hive2://localhost:10000/default:(直接回车)
-# Error: Failed to open new session: java.lang.RuntimeException: org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.security.authorize.AuthorizationException): User: ylz is not allowed to impersonate anonymous (state=,code=0)
-# beeline>
-```
-
-对于上述的 Error, 修改 hadoop 的 core-site.xml 加入:
-
-```xml
-<property>
-<name>hadoop.proxyuser.ylz.hosts</name>
-<value>*</value>
-</property>
-<property>
-<name>hadoop.proxyuser.ylz.groups</name>
-<value>*</value>
-</property>
+beeline> !connect jdbc:hive2://localhost:10000/default
+Connecting to jdbc:hive2://localhost:10000/default
+Enter username for jdbc:hive2://localhost:10000/default:(直接回车)
+Enter password for jdbc:hive2://localhost:10000/default:(直接回车)
+Error: Failed to open new session: java.lang.RuntimeException: org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.security.authorize.AuthorizationException): User: zhds is not allowed to impersonate anonymous (state=,code=0)
+beeline>
 ```
 
 :::note
-默认没有用户密码, hive-site.xml 中 hive.server2.authentication 为 NONE
+默认 hive-site.xml 中 hive.server2.authentication 为 NONE（no authentication check – plain SASL transport）,用户密码随意不做检查
+
+或者`$HIVE_HOME/bin/hive --service hiveserver2`，Usage：`$HIVE_HOME/bin/hive <parameters> --service serviceName <service parameters>`
+
+Service List: beeline cleardanglingscratchdir cli hbaseimport hbaseschematool help hiveburninclient hiveserver2 hplsql hwi jar lineage llapdump llap llapstatus metastore metatool orcfiledump rcfilecat schemaTool version
+
 :::
 
-### 重启 hadoop
+- 问题一：对于上述的 Error, 修改 hadoop 的 core-site.xml 加入:
+
+```xml
+<property>
+<name>hadoop.proxyuser.zhds.hosts</name>
+<value>*</value>
+</property>
+<property>
+<name>hadoop.proxyuser.zhds.groups</name>
+<value>*</value>
+</property>
+```
+
+重启 hadooop
 
 ```bash
 $HADOOP_HOME/sbin/hadoop-daemon.sh stop namenode
@@ -98,6 +103,119 @@ $HADOOP_HOME/sbin/hadoop-daemon.sh start namenode
 $HADOOP_HOME/sbin/hadoop-daemon.sh start secondarynamenode
 $HADOOP_HOME/sbin/hadoop-daemon.sh start datanode
 ```
+
+- 问题二：**启动后进程存在监听端口 10000 不存在**
+
+打开 hive 日志
+
+```bash
+$ cd $HIVE_HOME/conf
+$ cp hive-log4j2.properties.template hive-log4j2.properties
+$ nano hive-log4j2.properties
+#property.hive.log.dir = $HIVE_HOME/logs
+```
+
+通过查看生成的 hive.log
+
+```log
+2023-03-21T10:32:50,756  WARN [main] server.HiveServer2: Error starting HiveServer2 on attempt 1, will retry in 60 seconds
+java.lang.RuntimeException: Error applying authorization policy on hive configuration: java.net.URISyntaxException: Relative path in absolute URI: ${system:java.io.tmpdir%7D/$%7Bsystem:user.name%7D
+...
+Caused by: java.lang.IllegalArgumentException: java.net.URISyntaxException: Relative path in absolute URI: ${system:java.io.tmpdir%7D/$%7Bsystem:user.name%7D
+...
+Caused by: java.net.URISyntaxException: Relative path in absolute URI: ${system:java.io.tmpdir%7D/$%7Bsystem:user.name%7D
+...
+```
+
+这个报错信息显示是路径写法不对,查看 hive-site.xml 可以发现很多`<value>${system:java.io.tmpdir}/${system:user.name}</value>`这种配置，将其中的`system:`去掉重启`sed -i 's/${system:/${/g' conf/hive-site.xml`
+
+## 用户密码不验证
+
+上述默认启动即不验证用户名密码是否正确，即`hive.server2.authentication=NONE`
+
+## 用户密码验证
+
+[Authentication/Security Configuration](https://cwiki.apache.org/confluence/display/Hive/Setting+Up+HiveServer2#SettingUpHiveServer2-Configuration)
+
+1. 在 hive-site.xml 中加
+
+```xml
+<!-- 设置 server2 验证方式是 CUSTOM；并指定自定义验证类是 org.apache.hadoop.hive.contrib.auth.XXXXPasswdAuthenticator -->
+<property>
+  <name>hive.server2.authentication</name>
+  <value>CUSTOM</value>
+</property>
+
+<property>
+  <name>hive.server2.custom.authentication.class</name>
+  <value>org.apache.hadoop.hive.contrib.auth.XXXXPasswdAuthenticator</value>
+</property>
+```
+
+2. 自定义验证类 `org.apache.hadoop.hive.contrib.auth.XXXXPasswdAuthenticator`继承 `org.apache.hive.service.auth.PasswdAuthenticationProvider`
+
+```java
+@Override
+public void Authenticate(String userName, String passwd) throws AuthenticationException
+{
+    LOG.info("user: " + userName + " try login.");
+
+    String passwdMD5 = getConf().get(String.format(HIVE_JDBC_PASSWD_AUTH_PREFIX, userName));
+
+    if (passwdMD5 == null)
+    {
+        String message = "user's ACL configration is not found. user:" + userName;
+        LOG.info(message);
+        throw new AuthenticationException(message);
+    }
+
+    String md5 = MD5Util.md5Hex(passwd);
+
+    if (!md5.equals(passwdMD5))
+    {
+        String message = "user name and password is mismatch. user:" + userName;
+        throw new AuthenticationException(message);
+    }
+}
+
+@Override
+public Configuration getConf()
+{
+    if (conf == null)
+    {
+        this.conf = new Configuration();
+    }
+    return conf;
+}
+
+@Override
+public void setConf(Configuration arg0)
+{
+    this.conf = arg0;
+}
+```
+
+3. 打 jar 包放到 ${HIVE_HOME}\lib 下
+
+:::caution
+jar 包中的目录结构和 org.apache.hadoop.hive.contrib.auth.XXXXPasswdAuthenticator 是一致的
+:::
+
+4. 在 hive-site.xml 中配置一组可用帐号密码
+
+```xml
+<property>
+<!-- username替换为用户名 -->
+    <name>hive.jdbc_passwd.auth.<username></name>
+    <value>用authenticate自定方法加密后的密码</value>
+</property>
+```
+
+:::note
+多组，只要添加多个如上的 property 即可
+:::
+
+5. 重启 HiveServer2 服务
 
 ## HiveServer1 和 HiveServer2
 

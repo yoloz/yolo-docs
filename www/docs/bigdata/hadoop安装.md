@@ -17,11 +17,11 @@ mkdir -p ~/hadoop-2.7.3/data/log
 
 ### 修改配置文件
 
-最基本要修改 3 个文件：hadoop-env.sh, core-site.xml, hdfs-site.xml
+最基本要修改 3 个文件(etc/hadoop/xxx)：hadoop-env.sh, core-site.xml, hdfs-site.xml
 
 - hadoop-env.sh
 
-主要是配置 jdk 的路径, 找到"export JAVA_Home="，填写 jdk 路径
+主要是配置 jdk 的路径, 找到"export JAVA_HOME="，填写 jdk 路径
 
 - core-site.xml
 
@@ -85,6 +85,11 @@ $HADOOP_HOME/sbin/hadoop-daemon.sh start namenode
 $HADOOP_HOME/sbin/hadoop-daemon.sh start secondarynamenode
 $HADOOP_HOME/sbin/hadoop-daemon.sh start datanode
 #$HADOOP_HOME/bin/hadoop fs -ls /   #没有错误说明启动成功
+
+#停止如下
+$HADOOP_HOME/sbin/hadoop-daemon.sh stop datanode
+$HADOOP_HOME/sbin/hadoop-daemon.sh stop secondarynamenode
+$HADOOP_HOME/sbin/hadoop-daemon.sh stop namenode
 ```
 
 ### 配置 yarn
