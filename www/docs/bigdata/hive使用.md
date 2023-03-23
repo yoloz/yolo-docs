@@ -40,7 +40,7 @@
 </property>
 <property>
 <name>hive.metastore.warehouse.dir</name>
-<value>$HIVE_HOME/warehouse</value>
+<value>/user/hive/warehouse</value>
 <description>hive表在hdfs的位置</description>
 </property>
 </configuration>
@@ -80,7 +80,7 @@ Service List: beeline cleardanglingscratchdir cli hbaseimport hbaseschematool he
 
 :::
 
-- 问题一：对于上述的 Error, 修改 hadoop 的 core-site.xml 加入:
+- 问题一：对于上述的 Error, 修改 hadoop 的 core-site.xml(然后重启 hadooop):
 
 ```xml
 <property>
@@ -93,16 +93,9 @@ Service List: beeline cleardanglingscratchdir cli hbaseimport hbaseschematool he
 </property>
 ```
 
-重启 hadooop
-
-```bash
-$HADOOP_HOME/sbin/hadoop-daemon.sh stop namenode
-$HADOOP_HOME/sbin/hadoop-daemon.sh stop secondarynamenode
-$HADOOP_HOME/sbin/hadoop-daemon.sh stop datanode
-$HADOOP_HOME/sbin/hadoop-daemon.sh start namenode
-$HADOOP_HOME/sbin/hadoop-daemon.sh start secondarynamenode
-$HADOOP_HOME/sbin/hadoop-daemon.sh start datanode
-```
+:::note
+详见:[Hadoop 中的 ProxyUser](./hadoop使用)
+:::
 
 - 问题二：**启动后进程存在监听端口 10000 不存在**
 
@@ -128,94 +121,6 @@ Caused by: java.net.URISyntaxException: Relative path in absolute URI: ${system:
 ```
 
 这个报错信息显示是路径写法不对,查看 hive-site.xml 可以发现很多`<value>${system:java.io.tmpdir}/${system:user.name}</value>`这种配置，将其中的`system:`去掉重启`sed -i 's/${system:/${/g' conf/hive-site.xml`
-
-## 用户密码不验证
-
-上述默认启动即不验证用户名密码是否正确，即`hive.server2.authentication=NONE`
-
-## 用户密码验证
-
-[Authentication/Security Configuration](https://cwiki.apache.org/confluence/display/Hive/Setting+Up+HiveServer2#SettingUpHiveServer2-Configuration)
-
-1. 在 hive-site.xml 中加
-
-```xml
-<!-- 设置 server2 验证方式是 CUSTOM；并指定自定义验证类是 org.apache.hadoop.hive.contrib.auth.XXXXPasswdAuthenticator -->
-<property>
-  <name>hive.server2.authentication</name>
-  <value>CUSTOM</value>
-</property>
-
-<property>
-  <name>hive.server2.custom.authentication.class</name>
-  <value>org.apache.hadoop.hive.contrib.auth.XXXXPasswdAuthenticator</value>
-</property>
-```
-
-2. 自定义验证类 `org.apache.hadoop.hive.contrib.auth.XXXXPasswdAuthenticator`继承 `org.apache.hive.service.auth.PasswdAuthenticationProvider`
-
-```java
-@Override
-public void Authenticate(String userName, String passwd) throws AuthenticationException
-{
-    LOG.info("user: " + userName + " try login.");
-
-    String passwdMD5 = getConf().get(String.format(HIVE_JDBC_PASSWD_AUTH_PREFIX, userName));
-
-    if (passwdMD5 == null)
-    {
-        String message = "user's ACL configration is not found. user:" + userName;
-        LOG.info(message);
-        throw new AuthenticationException(message);
-    }
-
-    String md5 = MD5Util.md5Hex(passwd);
-
-    if (!md5.equals(passwdMD5))
-    {
-        String message = "user name and password is mismatch. user:" + userName;
-        throw new AuthenticationException(message);
-    }
-}
-
-@Override
-public Configuration getConf()
-{
-    if (conf == null)
-    {
-        this.conf = new Configuration();
-    }
-    return conf;
-}
-
-@Override
-public void setConf(Configuration arg0)
-{
-    this.conf = arg0;
-}
-```
-
-3. 打 jar 包放到 ${HIVE_HOME}\lib 下
-
-:::caution
-jar 包中的目录结构和 org.apache.hadoop.hive.contrib.auth.XXXXPasswdAuthenticator 是一致的
-:::
-
-4. 在 hive-site.xml 中配置一组可用帐号密码
-
-```xml
-<property>
-<!-- username替换为用户名 -->
-    <name>hive.jdbc_passwd.auth.<username></name>
-    <value>用authenticate自定方法加密后的密码</value>
-</property>
-```
-
-:::note
-多组，只要添加多个如上的 property 即可
-:::
-
-5. 重启 HiveServer2 服务
 
 ## HiveServer1 和 HiveServer2
 

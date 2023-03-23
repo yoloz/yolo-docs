@@ -78,7 +78,7 @@ public void cdhHiveTest() {
         //无验证方式：nosasl
         url = "jdbc:hive2://192.168.124.236:10000/default;AuthMech=0;transportMode=binary;";
         //用户名密码方式:none,custom
-        url = "jdbc:hive2://192.168.124.236:10000/default;AuthMech=3;UID='';PWD='';";
+        url = "jdbc:hive2://192.168.124.236:10000/default;AuthMech=3;UID=test;PWD=test;";
     try {
         Properties properties = new Properties();
         // Class.forName("com.cloudera.hive.jdbc41.HS2Driver");
