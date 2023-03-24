@@ -203,7 +203,7 @@ $ sudo apt install krb5-user
 - 系统级修改文件`/etc/profile`，用户级`～/.profile`(没有手动创建)
   ```log
   export KRB5CONF=/etc/krb5.conf
-  #krb5cache文件不需要提前创建
+  #krb5cache文件不需要提前创建(非必要，默认/tmp/krb5cc_[id])
   export KRB5CCNAME=/tmp/krb5cache
   ```
 - source `/etc/profile`或`～/.profile`
@@ -223,6 +223,10 @@ Default principal: test@ZHDS.CO
 Valid starting       Expires              Service principal
 03/18/2023 15:02:33  03/19/2023 15:02:33  krbtgt/ZHDS.CO@ZHDS.CO
 ```
+
+:::caution 注意
+如果未在/etc/hosts 里添加映射关系，直接执行`kinit`会报错：`kinit: Resource temporarily unavailable while getting initial credentials`
+:::
 
 ## cache 文件及验证
 
