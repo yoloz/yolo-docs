@@ -135,3 +135,13 @@ Maven 在升级到 3.8.1 以后，从安全角度考虑，默认将非 https 的
 </mirror>
 
 ```
+
+## createDependencyReducedPom 属性
+
+maven-shade-plugin 插件有个配置属性:createDependencyReducedPom,默认值为 true.
+
+假如我的一个工程 A 依赖了 spring-boot-starter-tomcat,那么这个依赖(即 spring-boot-starter-tomcat)中的.class 文件会被打包进生成的 A.jar 包中，而在生成的 dependency-reduced-pom.xml 文件中，这个依赖将被 exclusion 掉。
+
+那么这个 dependency-reduced-pom.xml 有什么用呢？
+
+我们如果在另一个工程 B 中引用了 A 工程对应的 A.jar，而且 B 也依赖了 spring-boot-starter-tomcat，那么我们在 B 工程中就不需要再依赖 spring-boot-starter-tomcat 了，这样可以避免重复引用。

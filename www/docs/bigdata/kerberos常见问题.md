@@ -249,7 +249,7 @@ Caused by: KrbException: Specified version of key is not available (44)
 此处 Hive Metastore canary 会自我修复解决；
 :::
 
-## GSS initiate failed [Caused by GSSException: No valid credentials provided...
+## GSS initiate failed-No valid credentials provided...
 
 直接在 CDH 集群的 hive 节点上操作:
 
@@ -270,3 +270,40 @@ Caused by: GSSException: No valid credentials provided (Mechanism level: Failed 
 ```
 
 无有效 credentials，执行`kinit -kt hive.keytab hive/cdh162`后再执行 hive 即可。
+
+在使用 JDBC 连接的时候，客户端使用 klist 查看信息正常，但是仍报错如下：
+
+```log
+javax.security.sasl.SaslException: GSS initiate failed
+        at com.sun.security.sasl.gsskerb.GssKrb5Client.evaluateChallenge(GssKrb5Client.java:211) ~[?:1.8.0_331]
+...
+Caused by: org.ietf.jgss.GSSException: No valid credentials provided (Mechanism level: Failed to find any Kerberos tgt)
+...
+```
+
+登陆用户`klist`正常，但是进程使用`sudo xxx`启动，所以在初始化的时候`sudo kinit xxx`即可。
+
+还有问题：
+
+[https://hbase.apache.org/book.html#trouble.client.security.rpc](https://hbase.apache.org/book.html#trouble.client.security.rpc)
+:::note
+hbase 链接里提到 jdk 的 JCE 无限制权限策略文件修改
+针对 jdk1.8.44 以上版本，请将 jre/lib/security/java.security 文件中的`#crypto.policy=unlimited`改为 `crypto.policy=unlimited`
+
+针对 jdk1.8.44 以下版本，请将 jre/lib/security/ 下 的 local_policy.jar 和 US_export_policy.jar 替换为官方网站提供了 JCE 无限制权限策略文件
+:::
+
+[oracle troubleshooting](../java/jgss常见问题)
+
+## Unable to obtain Principal Name for authentication
+
+```log
+java.sql.SQLException: [Cloudera][HiveJDBCDriver](500168) Error creating login context using ticket cache: Unable to obtain Principal Name for authentication .
+...
+Caused by: com.cloudera.hiveserver2.support.exceptions.GeneralException: [Cloudera][HiveJDBCDriver](500168) Error creating login context using ticket cache: Unable to obtain Principal Name for authentication .
+...
+Caused by: javax.security.auth.login.LoginException: Unable to obtain Principal Name for authentication
+...
+```
+
+客户端的 klist 数据正常，启动的 JDBC 连接报错，情况是连接进程在`kinit`之前已经启动，重启进程即可。
