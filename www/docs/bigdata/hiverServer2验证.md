@@ -2,7 +2,7 @@
 
 ## NOSASL
 
-hive-site.xml 里配置`hive.server2.authentication=nosasl`
+hive-site.xml 里配置`hive.server2.authentication=NOSASL`
 
 即过期的 hiveserver1 方式(无安全措施)
 
