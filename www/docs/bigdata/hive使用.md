@@ -46,8 +46,11 @@
 </configuration>
 ```
 
-:::note
-如果使用 mysql, 需要将对应的 jdbc 驱动 jar 移到 lib 下
+:::caution 注意
+
+- 如果使用 mysql, 需要将对应的 jdbc 驱动 jar 移到 lib 下
+- 创建 hive 的存储`$HADOOP_HOME/bin/hadoop fs -mkdir -p /user/hive/warehouse`
+
 :::
 
 ### 初始化
@@ -132,3 +135,90 @@ HiveServer2 对 HiveServer 进行了重写，来解决这些问题，从 Hive 0.
 
 从 Hive1.0.0 版本（以前称为 0.14.1 版本）开始，HiveServer 开始被删除,请切换到 HiveServer2。
 :::
+
+## hiveserver2 简单测试
+
+- 首先创建文件 test001.txt:
+
+```log
+1,xiaoming,book,beijing
+2,lilei,tv,nanjing
+3,lihua,music,heilongjiang
+```
+
+- 然后创建表：
+
+```bash
+zhds@apache250:/opt/hive-2.1.1$ bin/beeline
+Beeline version 2.1.1 by Apache Hive
+beeline> !connect jdbc:hive2://localhost:10000/default
+#...
+0: jdbc:hive2://localhost:10000/default>  create table test001(id int,name string,hobby string,address String) row format delimited fields terminated by ',';
+
+```
+
+报错：
+
+```log
+Error: Error while processing statement: FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask. MetaException(message:Got exception: org.apache.hadoop.security.AccessControlException Permission denied: user=anonymous, access=WRITE, inode="/user/hive/warehouse/test001":zhds:supergroup:drwxr-xr-x
+...
+) (state=08S01,code=1)
+```
+
+:::info
+
+- 查看文件权限,直接放权如下(不合适)：
+
+```bash
+zhds@apache250:/opt/hadoop-2.7.1$ bin/hdfs dfs -ls /
+Found 2 items
+drwx-wx-wx   - zhds supergroup          0 2023-03-21 10:10 /tmp
+drwxr-xr-x   - zhds supergroup          0 2023-04-01 06:59 /user
+
+# 用hadoop修改权限
+zhds@apache250:/opt/hadoop-2.7.1$ bin/hadoop fs -chmod -R 777 /
+```
+
+- 改变 beeline 登入的用户为 zhds 执行
+
+```bash
+zhds@apache250:/opt/hive-2.1.1$ bin/beeline -n zhds -u jdbc:hive2://localhost:10000
+# ...
+0: jdbc:hive2://localhost:10000> create table test001(id int,name string,hobby string,address string) row format delimited fields terminated by ',';
+No rows affected (1.296 seconds)
+0: jdbc:hive2://localhost:10000>
+```
+
+:::note
+beeline -n [用户名参数]
+:::
+
+这样写法-n 参数不生效：
+
+```bash
+zhds@apache250:/opt/hive-2.1.1$ bin/beeline -n zhds
+Beeline version 2.1.1 by Apache Hive
+beeline> !connect jdbc:hive2://localhost:10000/default
+#...
+```
+
+:::note
+可在 connect 命令后面让输入用户名的时候输入 zhds 即可(上述操作认证方式为 NONE)
+:::
+
+- 加载数据并查询：
+
+```bash
+0: jdbc:hive2://localhost:10000> load data local inpath '/home/zhds/test001.txt' overwrite into table test001;
+No rows affected (6.115 seconds)
+0: jdbc:hive2://localhost:10000> select * from test001;
++-------------+---------------+----------------+------------------+--+
+| test001.id  | test001.name  | test001.hobby  | test001.address  |
++-------------+---------------+----------------+------------------+--+
+| NULL        | xiaoming      | book           | beijing          |
+| NULL        | lilei         | tv             | nanjing          |
+| NULL        | lihua         | music          | heilongjiang     |
++-------------+---------------+----------------+------------------+--+
+3 rows selected (3.055 seconds)
+0: jdbc:hive2://localhost:10000>
+```
