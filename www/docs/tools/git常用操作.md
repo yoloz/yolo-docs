@@ -205,6 +205,15 @@ $
 
 :::
 
+### commit id 创建分支
+
+```bash
+# 查看提交
+$ git log
+# 创建指定commit之前的本地分支
+$ git checkout [commitId] -b <branchName>
+```
+
 ### 重命名分支
 
 先删除远程分支，然后重命名本地分支，再重新提交一个远程分支
@@ -248,6 +257,15 @@ git fetch origin tag <tagname> #获取远程tag
 git push origin --delete tag <tagname> #删除远程tag
 #从tag创建新的分支继续开发：git checkout -b 新分支 tag名
 git checkout -b [newbranch] [tabname]
+```
+
+### commit id 创建 TAG
+
+```bash
+# 查看提交
+$ git log
+#命令git tag <name>用于新建一个标签，默认为HEAD，也可以指定一个commit id；
+$ git tag -a v0.1 -m "version 0.1 released" 3628164
 ```
 
 ## diff
