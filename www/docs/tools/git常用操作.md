@@ -185,6 +185,26 @@ git branch -d <branchName>  #删除本地分支
 git push origin --delete <branchName> #删除远程分支
 ```
 
+:::note
+
+```bash
+$ git push origin --delete 3.2
+error: unable to delete '3.2': remote ref does not exist
+error: failed to push some refs to 'https://xxxx.git'
+#解决方案是清除远程分支的本地缓存
+$ git fetch -p origin
+From https://xxxxxx
+ - [deleted]         (none)     -> origin/3.2
+$ git branch -a
+  darkTheme
+* master
+  remotes/origin/darkTheme
+  remotes/origin/master
+$
+```
+
+:::
+
 ### 重命名分支
 
 先删除远程分支，然后重命名本地分支，再重新提交一个远程分支
@@ -223,6 +243,7 @@ git tag #查看tag
 git show V1.2 #查看具体tag附注信息
 git push origin --tags #标签同步到远程代码库
 git checkout tag_name #切换到tag,只读版本
+git tag -d <tagname>  #删除本地tag
 git fetch origin tag <tagname> #获取远程tag
 git push origin --delete tag <tagname> #删除远程tag
 #从tag创建新的分支继续开发：git checkout -b 新分支 tag名
