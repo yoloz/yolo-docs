@@ -185,7 +185,7 @@ git branch -d <branchName>  #删除本地分支
 git push origin --delete <branchName> #删除远程分支
 ```
 
-:::note
+清除远程分支的本地缓存(`remote ref does not exist`):
 
 ```bash
 $ git push origin --delete 3.2
@@ -202,8 +202,6 @@ $ git branch -a
   remotes/origin/master
 $
 ```
-
-:::
 
 ### commit id 创建分支
 
