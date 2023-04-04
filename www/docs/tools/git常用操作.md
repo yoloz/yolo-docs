@@ -210,7 +210,7 @@ $
 ```bash
 # 查看提交
 $ git log
-# 创建指定commit之前的本地分支
+# 创建指定commit id 的本地分支
 $ git checkout [commitId] -b <branchName>
 ```
 
