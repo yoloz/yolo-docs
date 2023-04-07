@@ -11,7 +11,3 @@
 ## 关闭右侧缩略图
 
 关闭:Settings=>Text Editor=>Minimap=>Enabled
-
-## golang 环境
-
-在用户(.bash或.profile)直接配置国内代理：`export GOPROXY=https://goproxy.cn`
