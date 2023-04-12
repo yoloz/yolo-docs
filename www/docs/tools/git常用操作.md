@@ -51,6 +51,29 @@ git remote add origin new_addr
 git remote set-url origin new_addr
 ```
 
+## pull
+
+`git pull` 其实就是 `git fetch` 和 `git merge FETCH_HEAD` 的简写.命令格式：`git pull <远程主机名> <远程分支名>:<本地分支名>`
+
+```bash
+#将远程主机 origin 的 master 分支拉取过来，与本地的 brantest 分支合并
+$ git pull origin master:brantest
+#如果远程分支是与当前分支合并，则冒号后面的部分可以省略
+$ git pull origin master
+```
+
+## push
+
+将本地的分支版本上传到远程并合并。命令格式`git push <远程主机名> <本地分支名>:<远程分支名>`,如果本地分支名与远程分支名相同，则可以省略冒号：`git push <远程主机名> <本地分支名>`
+
+```bash
+#将本地的 master 分支推送到 origin 主机的 master 分支
+$ git push origin master
+$ git push origin master:master
+#如果本地版本与远程版本有差异，但又要强制推送可以使用 --force 参数
+git push --force origin master
+```
+
 ## commit
 
 git 有一个**暂存区**(staging area), 可以放入新添加的文件或加入新的改动，commit 是将暂存区的代码提交到本地仓库，不是我们 disk 上的改动(disk 可见的是**工作区**)。
@@ -167,6 +190,54 @@ $ git revert b3e1314 f53e844...
 $ git reset --soft HEAD~3
 ```
 
+## reset
+
+用于回退版本，可以指定退回某一次提交的版本:`git reset [--soft | --mixed | --hard] [HEAD]`
+:::info HEAD
+
+- HEAD 表示当前版本
+- HEAD^ 上一个版本
+- HEAD^^ 上上一个版本
+- HEAD^^^ 上上上一个版本
+
+以此类推，也可以使用 ～数字表示
+
+- HEAD~0 表示当前版本
+- HEAD~1 上一个版本
+- HEAD^2 上上一个版本
+- HEAD^3 上上上一个版本
+
+以此类推
+:::
+
+`git reset HEAD` 命令用于取消已缓存的内容,即取消之前 git add 添加。
+
+- --mixed 为默认，可以不用带该参数，用于重置暂存区的文件与上一次的提交(commit)保持一致，工作区文件内容保持不变。
+
+```bash
+$ git reset HEAD^            # 回退所有内容到上一个版本
+$ git reset HEAD^ hello.php  # 回退 hello.php 文件的版本到上一个版本
+$ git reset  052ex34           # 回退到指定版本
+```
+
+- --soft 参数用于回退到某个版本
+
+```bash
+$ git reset --soft HEAD~3   # 回退上上上一个版本
+```
+
+- --hard 参数撤销工作区中所有未提交的修改内容，将暂存区与工作区都回到上一次版本，并删除之前的所有信息提交
+
+```bash
+$ git reset --hard HEAD~3  # 回退上上上一个版本
+$ git reset --hard bae128c  # 回退到某个版本回退点之前的所有信息。
+$ git reset --hard origin/master    # 将本地的状态回退到和远程的一样
+```
+
+:::caution
+谨慎使用 –-hard 参数，它会删除回退点之前的所有信息
+:::
+
 ## branch
 
 ```bash
@@ -248,9 +319,10 @@ git checkout thisBranch  #切换thisBranch继续开发
 git tag -a V1.2 -m 'release 1.2' #创建了本地一个版本V1.2,并且添加了附注信息
 git tag #查看tag
 git show V1.2 #查看具体tag附注信息
-git push origin --tags #标签同步到远程代码库
-git checkout tag_name #切换到tag,只读版本
 git tag -d <tagname>  #删除本地tag
+git tag -d $(git tag -l) #删除本地所有tag
+git push origin --tags #本地(所有)标签同步到远程代码库
+git checkout tag_name #切换到tag,只读版本
 git fetch origin tag <tagname> #获取远程tag
 git push origin --delete tag <tagname> #删除远程tag
 #从tag创建新的分支继续开发：git checkout -b 新分支 tag名
@@ -309,10 +381,48 @@ git merge master [--allow-unrelated-history] #拷贝本地master分支到本地d
 git push def1 def:master  #push 本地def1分支到def中的master分支
 ```
 
-fatal: refusing to merge unrelated histories 添加
-`--allow-unrelated-history` 告诉 git 允许不相关历史合并
-`git pull def master:def` 用于新建分支，如果更新 def 分支，则要先 checkout 到 def 分支
+:::note
+
+- fatal: refusing to merge unrelated histories, 添加`--allow-unrelated-history` 告诉 git 允许不相关历史合并
+- `git pull def master:def1` 用于新建分支 def1，如果更新 def1 分支，则要先 checkout 到 def1 分支
+
+:::
+
+如想自定义分支 beats,首先在 github 上 fork(这里 Copy the main branch only 勾选上)
+
+```bash
+$ git clone git@github.com:xxx/beats.git
+$ git remote -v
+origin  git@github.com:xxx/beats.git (fetch)
+origin  git@github.com:xxx/beats.git (push)
+$ git remote add elastic https://github.com/elastic/beats.git
+$ git remote -v
+elastic https://github.com/elastic/beats.git (fetch)
+elastic https://github.com/elastic/beats.git (push)
+origin  git@github.com:xxx/beats.git (fetch)
+origin  git@github.com:xxx/beats.git (push)
+
+git fetch elastic tag v7.10.2
+#通过tag创建分支
+git checkout -b 7.10.2 v7.10.2
 
 ```
 
+## merge
+
+将两个或两个以上的开发历史加入(合并)一起
+
+```bash
+#合并分支fixes和enhancements在当前分支的顶部，使它们合并
+$ git merge fixes enhancements
+#合并obsolete分支到当前分支，使用ours合并策略
+$ git merge -s ours obsolete
+#将分支maint合并到当前分支中，但不要自动进行新的提交
+$ git merge --no-commit maint
+#将分支dev合并到当前分支中，自动进行新的提
+$ git merge dev
 ```
+
+:::caution
+--no-commit:当您想要对合并进行进一步更改时，可以使用此选项，或者想要自己编写合并提交消息。应该不要滥用这个选项来潜入到合并提交中。小修补程序，如版本名称将是可以接受的。
+:::
