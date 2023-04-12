@@ -39,7 +39,7 @@ output.elasticsearch:
       when.contains: { tags: t1 }
     - when.contains: { tags: t2 }
       index: custom_name_t2
-  hosts: ['127.0.0.1:9200']
+  hosts: ["127.0.0.1:9200"]
 ```
 
 :::info
@@ -97,6 +97,10 @@ output.elasticsearch:
 ```bash
 $ ./filebeat -e -c config/customConf.yml
 ```
+
+:::note
+-e: Log to stderr and disable syslog/file output
+:::
 
 ## Input Log
 
@@ -283,3 +287,16 @@ logging.metrics.enabled: false
 如果为 true，则以 json 格式记录消息。默认值为 false。
 
 :::
+
+## 连接 ES8.x
+
+8.x 默认启用安全策略，用户密码可在安装日志里查看，也可使用`bin/elasticsearch-reset-password`重置
+
+```yml
+output.elasticsearch:
+  hosts: ["https://192.168.124.253:9200"]
+  username: "elastic"
+  password: "K+Zp-t0FiGFBh=9wCsPl"
+  # ${ES_HOME}/config/certs/http_ca.crt
+  ssl.certificate_authorities: "./http_ca.crt"
+```
