@@ -117,7 +117,7 @@ UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
 
 - sed 所谓的删除都是在模式空间中执行的，不会真正改动原文件;
 - 如果需要对源文件进行替换，则加入-i 参数即可,命令`sed -i "/pattern/d" log.txt`；
-- 如果删除没有效果，可以查看一下文件编码[《转换文件编码iconv》](./转换文件编码iconv.md);
+- 如果删除没有效果，可以查看一下文件编码[《转换文件编码 iconv》](./转换文件编码iconv.md);
 
 :::
 
@@ -176,4 +176,17 @@ sed 命令可以删除连续又或者不连续的行内容。
 [roc@roclinux ~]$ sed '/m$/d' sed-demo.txt
 #删除以 x 或 m 结尾的行
 [roc@roclinux ~]$ sed '/[xm]$/d' sed-demo.txt
+```
+
+## 大小写转换
+
+sed 中，使用`\u` 表示大写，`\l` 表示小写
+
+```bash
+#把每个单词的第一个小写字母变大写：
+sed 's/\b[a-z]/\u&/g' filename
+#把所有小写变大写：
+sed 's/[a-z]/\u&/g' filename
+#大写变小写：
+sed 's/[A-Z]/\l&/g' filename
 ```

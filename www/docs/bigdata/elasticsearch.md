@@ -1,4 +1,4 @@
-## 移除 module 中的 ml
+## 移除 8.x 中 module 的 ml
 
 不用其机器学习，同时减小压缩包：
 
@@ -11,13 +11,13 @@
 修改后的包启动会有告警(忽略)`[2023-04-12T09:50:20,987][WARN ][x-pack-ml-controller-stderr] [test] /xxx/elasticsearch-8.7.0/modules/x-pack-ml/platform/linux-x86_64/bin/controller: error while loading shared libraries: libMlCore.so: cannot open shared object file: No such file or directory`
 :::
 
-## elasticsearch-head
+## 8.x 中 elasticsearch-head
 
 由于 8.x 默认启用了安全策略，如果想使用此插件，可以在浏览器里先访问`https://ip:9200/`，接受证书然后用户密码登陆，再回到插件刷新即可。
 
-## 重新初始化安全信息
+## 8.x 的安全配置
 
-首次启动安装会生成安全信息
+首次启动安装会生成安全信息,详情见：[Start the Elastic Stack with security enabled automatically](https://www.elastic.co/guide/en/elasticsearch/reference/master//configuring-stack-security.html)
 
 ```log
 ...
@@ -45,4 +45,27 @@
 ...
 ```
 
-如果忘记密码可以重置，以后启动不会再生成(简单测试安全信息在 data 目录里，删除后即类似重新安装),里面存在数据，可以通过 bin 里的脚本手动生成。
+:::caution
+
+1. 首次启动 auto configuration 输出控制台，不输出到日志;
+2. 首次启动生成的证书在${ES_HOME}/config/certs 里;
+3. 工程方便或者遗忘了密码指纹之类：重置密码`bin/elasticsearch-reset-password -u elastic`，获取指纹`openssl x509 -fingerprint -sha256 -in config/certs/http_ca.crt`
+
+:::
+自动化脚本：
+
+```bash
+#!/usr/bin/env bash
+path=$(cd `dirname $0`/..;pwd)
+if [ -d "${path}/../es/config/certs" ];then
+  echo y|${path}/../es/bin/elasticsearch-reset-password -u elastic -s > resetPwd
+  echo "\n"
+  echo "user:elastic,passwd:`cat resetPwd`"
+  rm -f resetPwd
+  openssl x509 -fingerprint -sha256 -in ${path}/../es/config/certs/http_ca.crt > fingerprint
+  echo "fingerprint:`sed -e '2,$d' -e 's/://g' fingerprint | awk -F '=' '{print tolower($2)}'`"
+  rm -f fingerprint
+else
+  echo "elasticsearch CA does not exit..."
+fi
+```

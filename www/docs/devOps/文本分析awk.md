@@ -77,6 +77,13 @@ This's a test
 10 There are orange apple
 ```
 
+### 字符截取
+
+```bash
+$ echo "SHA256 Fingerprint=0288:24:7B:4B:0A:0B:1F:F3:46:B0:F4:7A:1A:E3:7E:84:D2:57:91:21:76:59:55:5D:F9:04:60:5D:2E:DE:4A" | awk -F '=' '{print $2}'
+# 0288:24:7B:4B:0A:0B:1F:F3:46:B0:F4:7A:1A:E3:7E:84:D2:57:91:21:76:59:55:5D:F9:04:60:5D:2E:DE:4A
+```
+
 ## 设置变量
 
 ```bash
@@ -196,4 +203,18 @@ There orange,apple,mongo
 
 ```bash
 [roc@roclinux ~]$ ps -ef |grep hello |awk '{print $2}'
+```
+
+## 大小写转换
+
+使用自带的 tolower 函数能够将指定的字段全部字符转换成小写，使用 toupper 函数能够将全部字符转换成大写。
+
+```bash
+# 使用awk命令tolower函数将字符串转换成小写
+echo "Tom Andersen" | awk '{print tolower($0)}'
+# tom andersen
+
+# 使用awk命令toupper函数将字符串转换成大写
+echo "Tom Andersen" | awk '{print toupper($0)}'
+# TOM ANDERSEN
 ```
