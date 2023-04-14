@@ -7,7 +7,15 @@
 3. Set up in browser: https://[youripaddress]/admin
 
 :::note
-登陆https://[youripaddress]/后可以修改生成的随机密码
+
+```bash
+yolo@rkn:~$ sudo dpkg -i openvpn-as-bundled-clients-latest.deb
+yolo@rkn:~$ sudo dpkg -i openvpn-as-latest-debian11.amd_64.deb
+#安装缺少的依赖
+yolo@rkn:~$ sudo apt install -f
+```
+
+登陆 https://[youripaddress]/后可以修改生成的随机密码
 :::
 
 ## 安装
