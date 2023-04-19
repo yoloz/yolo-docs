@@ -300,3 +300,32 @@ output.elasticsearch:
   # ${ES_HOME}/config/certs/http_ca.crt
   ssl.certificate_authorities: "./http_ca.crt"
 ```
+
+## filebeat 过滤日志
+
+添加 processor 处理:event -> processor 1 -> event1 -> processor 2 -> event2 ...
+
+[Filter and enhance data with processors](https://www.elastic.co/guide/en/beats/filebeat/current/filtering-and-enhancing-data.html)
+
+[Conditions](https://www.elastic.co/guide/en/beats/filebeat/current/defining-processors.html#conditions).**Each condition receives a field to compare.**
+
+```yml
+#丢弃非错误日志，message是json字符串
+processors:
+  #- drop_fields:
+  #    fields: [log, host, input, agent, ecs]
+  #    ignore_missing: false
+  - decode_json_fields:
+      fields: ["message"]
+  - drop_event:
+      when:
+        not:
+          has_fields: ["message.err"]
+```
+
+可以通过 drop_fields 去除 field,对于@timestamp 和@metadata 无法通过这种方式移除，采集的内容在 message 中，可以在输出中配置
+
+```yml
+codec.format:
+  string: "%{[message]}"
+```
