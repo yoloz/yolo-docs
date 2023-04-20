@@ -322,9 +322,11 @@ git show V1.2 #查看具体tag附注信息
 git tag -d <tagname>  #删除本地tag
 git tag -d $(git tag -l) #删除本地所有tag
 git push origin --tags #本地(所有)标签同步到远程代码库
+git push origin tag <tagname> #同步本地tag到远程仓库
 git checkout tag_name #切换到tag,只读版本
 git fetch origin tag <tagname> #获取远程tag
 git push origin --delete tag <tagname> #删除远程tag
+git push origin --delete tag $(git tag -l) #删除本地对应的远程tag
 #从tag创建新的分支继续开发：git checkout -b 新分支 tag名
 git checkout -b [newbranch] [tabname]
 ```
