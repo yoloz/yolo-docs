@@ -53,12 +53,13 @@ This's a test
 ### 指定分隔符输出
 
 ```bash
-[roc@roclinux ~]$  awk -F, '{print $1,$2}'   log.txt
+# 输出文件/etc/sysctl.conf中含有内容vm.max_map_count的以=分隔的最后一列内容
+# ...
+# vm.max_map_count=524288
+# ...
+[roc@roclinux ~]$ echo $(grep vm.max_map_count /etc/sysctl.conf | awk -F= '{print $NF}')
  ---------------------------------------------
- 2 this is a test
- 3 Do you like awk
- This's a test
- 10 There are orange apple
+524288
 ```
 
 :::info

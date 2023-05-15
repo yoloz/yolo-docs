@@ -80,3 +80,38 @@ fi
 - 注意到"$test"x最后的x，这是特意安排的，因为当$test 为空的时候，上面的表达式就变成了 x = testx，显然是不相等的。而如果没有这个 x，表达式就会报错：[: =: unary operator expected
 
 :::
+
+## 判断操作系统
+
+```bash
+a=$(echo $(cat /etc/*release) | tr [A-Z] [a-z])
+
+if [[ $a =~ "centos" || $a =~ "redhat" ]]; then
+    echo "centos..."
+  elif [[ $a =~ "ubuntu" || $a =~ "debian" ]]; then
+    echo "ubuntu..."
+  elif [[ $a =~ "openeuler" ]]; then
+    echo "openeuler..."
+  else
+    echo "system: $a is not support"
+    exit 1
+fi
+```
+
+## 判断软件是否安装
+
+```bash
+# rpm方式
+if [[ -n "$(rpm -qa |grep mariadb)" ]]; then
+  echo "system has mariadb..."
+fi
+# dpkg 方式
+if [[ -n "$(dpkg -l |grep mariadb)" ]]; then
+  echo "system has mariadb..."
+fi
+# yum方式
+if [[ -n "$(yum list installed | grep mariadb)" ]]; then
+  echo "system has mariadb..."
+fi
+# 自定义安装的，可以通过查看执行文件是否存在判断
+```
