@@ -61,10 +61,6 @@ public class Counter {
 
 Java 调用 C 函数需要做 C 函数和 Java 本地方法的映射，建立该映射有两种方式: 显式映射和隐式映射
 
-### 显式映射
-
-需要手动实现 JNI 的函数(略)
-
 ### 隐式映射
 
 采用隐式映射的方式不需要去手动建立链接，JNI 规范已经使用了一套映射规范，在 C 函数中实现的函数名格式：`Java_包名_类名_Java方法名`,**需要将包名中的`.`换成`_`**
@@ -106,3 +102,55 @@ yoloz@debian:~$ /opt/jdk-8/bin/java -Djava.library.path=. indi.yolo.sample.jni.C
 - 参数`.`：这个点代表当前目录，当然也可以改为其他目录；
 
 :::
+
+### 显式映射
+
+需要手动实现 JNI 的函数,其他同上
+
+```c
+#include <jni.h>
+
+#define ARRAY_SIZE(arr)   (sizeof(arr) / sizeof((arr)[0]))
+
+// C函数需要比Java本地方法多出两个参数，这两个参数之后的参数列表与Java本地方法保持一致
+// 第一个参数表示JNI环境，该环境封装了所有JNI的操作函数
+// 第二个参数为Java代码中调用该C函数的对象
+// jint表示JNI的int类型，在本文后面会给出所有JNI类型
+jint add(JNIEnv *env, jobject thiz, jint a, jint b)
+{
+    return a + b;
+}
+
+static const JNINativeMethod methods[] = {
+    // 第一个参数为Java本地方法名
+    // 第二个参数为函数签名：(参数签名)返回值签名， 在本文后面会给出所有签名符号
+    // 第三个参数为C函数
+    {"addFromC", "(II)I", (void *)add},   // 建立Java本地方法和C函数的映射
+};
+
+// 在Java中调用System.loadLibrary方法时会调用到该函数
+JNIEXPORT jint JNICALL
+JNI_OnLoad(JavaVM *jvm, void *reserved)
+{
+    JNIEnv *env;
+    jclass cls;
+
+    // 获取JNI环境
+    if ((*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION_1_8)) {
+        return JNI_ERR;
+    }
+
+    // 获取Java类
+    // JNI_OnLoad函数写法基本固定， 唯一需要修改的是FindClass的第二个参数，即类名
+    cls = (*env)->FindClass(env, "Hello");
+    if (cls == NULL) {
+        return JNI_ERR;
+    }
+
+    // 注册本地方法
+    if ((*env)->RegisterNatives(env, cls, methods, ARRAY_SIZE(methods)) < 0)
+        return JNI_ERR;
+
+    return JNI_VERSION_1_8;
+}
+```
