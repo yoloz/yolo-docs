@@ -142,7 +142,7 @@ JNI_OnLoad(JavaVM *jvm, void *reserved)
 
     // 获取Java类
     // JNI_OnLoad函数写法基本固定， 唯一需要修改的是FindClass的第二个参数，即类名
-    cls = (*env)->FindClass(env, "Hello");
+    cls = (*env)->FindClass(env, "Counter");
     if (cls == NULL) {
         return JNI_ERR;
     }
