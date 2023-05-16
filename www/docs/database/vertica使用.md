@@ -139,7 +139,7 @@ zhds@vertica:~$ echo 'exit 0' | sudo tee -a /etc/rc.local
 #服务启动等更多信息见下方链接
 ```
 
-详见[《服务自启动》](../linux/服务自启动.md)
+详见[《服务自启动配置》](../linux/服务自启动配置.md)
 :::
 
 ```bash
