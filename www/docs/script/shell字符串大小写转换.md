@@ -23,7 +23,7 @@ echo "Hello Hello" | tr -d H
 
 ## awk 或 sed
 
-此两个命令自带有大小写转换，具体见[文本分析 awk](./文本分析awk.md),[文本编辑 sed](./文本编辑sed.md)
+此两个命令自带有大小写转换，具体见[文本分析 awk](../devOps/文本分析awk.md),[文本编辑 sed](../devOps/文本编辑sed.md)
 
 ## 利用 Bash 特性
 
