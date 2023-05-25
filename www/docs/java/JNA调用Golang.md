@@ -1,7 +1,7 @@
 JNA 使用可见[JNI 和 JNA 的使用](./JNI和JNA的使用.md)
 cgo 使用可见[构建动态库](../golang/构建动态库.md)
 
-数值型数据映射即可，字符串不能确定 jna 最后是否释放了`c.malloc`，故提供 Structure 的方式，手动去释放(对于 java Object,也可参考 Structure 方式)。
+对于普通类型型数据映射即可，对于 java Object,也可参考 Structure 方式
 
 ### 直接返回`*C.char`
 
