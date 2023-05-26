@@ -452,3 +452,45 @@ yoloz@debian:~/projects/xxx/sample/jna$ /opt/jdk-8/bin/javac -cp /xxx/jna-5.13.0
 # 添加JVM参数：-Djna.debug_load=true输出详情
 yoloz@debian:~/projects/xxx/sample/jna$ /opt/jdk-8/bin/java -cp /xxx/5.13.0/jna-5.13.0.jar:. -Djava.library.path=. indi.yolo.sample.jna.JNASample
 ```
+
+## java.lang.UnsatisfiedLinkError
+
+```log
+PS C:\java> .\jre1.8.0_361\bin\java.exe -cp ".;.\jna-5.13.0.jar" indi.yolo.sample.jna.JNAGoSample
+Exception in thread "main" java.lang.UnsatisfiedLinkError: Unable to load library 'C:\java\libtest.dll':
+%1 不是有效的 Win32 应用程序。
+
+%1 不是有效的 Win32 应用程序。
+Native library (win32-x86-64/C:\java\libtest.dll) not found in resource path ([file:/C:/java/, file:/C:/java/jna-5.13.0.jar])
+        at com.sun.jna.NativeLibrary.loadLibrary(NativeLibrary.java:323)
+        at com.sun.jna.NativeLibrary.getInstance(NativeLibrary.java:483)
+        at com.sun.jna.Library$Handler.<init>(Library.java:197)
+        at com.sun.jna.Native.load(Native.java:622)
+        at com.sun.jna.Native.load(Native.java:596)
+        at indi.yolo.sample.jna.JNAGoSample$CLibrary.<clinit>(JNAGoSample.java:13)
+        at indi.yolo.sample.jna.JNAGoSample.main(JNAGoSample.java:31)
+        Suppressed: java.lang.UnsatisfiedLinkError: %1 不是有效的 Win32 应用程序。
+
+                at com.sun.jna.Native.open(Native Method)
+                at com.sun.jna.NativeLibrary.loadLibrary(NativeLibrary.java:211)
+                ... 6 more
+        Suppressed: java.lang.UnsatisfiedLinkError: %1 不是有效的 Win32 应用程序。
+
+                at com.sun.jna.Native.open(Native Method)
+                at com.sun.jna.NativeLibrary.loadLibrary(NativeLibrary.java:224)
+                ... 6 more
+        Suppressed: java.io.IOException: Native library (win32-x86-64/C:\java\libtest.dll) not found in resource path ([file:/C:/java/, file:/C:/java/jna-5.13.0.jar])
+                at com.sun.jna.Native.extractFromResourcePath(Native.java:1145)
+                at com.sun.jna.NativeLibrary.loadLibrary(NativeLibrary.java:295)
+                ... 6 more
+```
+
+主要是 3 种原因：
+
+- 本地文件没有放置到 classpath；
+- 本地文件版本与 jdk 版本不一致，如 dll、so 为 32 位，jdk 为 64 位；
+- 本地文件依赖的其它库不存在，如 so 依赖的其它 so 不存在，则 so 本身就不能运行，自然会报错；
+  - 判断 dll 是否依赖其它 dll，可以使用工具或向系统中注册 dll，能注册成功即是 dll 依赖正常。
+  - 判断 so 是否依赖其它 so，使用 ldd 命令，如果有缺失，会出现 xx.so not found 字样。
+
+此处错误在`libtest.dll`在 linux 中生成，在 window 中安装 mingw64 后编译生成 libtest.dll 即可使用。
