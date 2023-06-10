@@ -62,6 +62,13 @@ function .onInstSuccess
 functionEnd
 ```
 
+:::caution 注意
+
+- 如果已经定义`!define MUI_FINISHPAGE_RUN "$INSTDIR\${PRODUCT_NAME}.exe"`则无需在写 function;
+- `go build -ldflags “-H windowsgui” main.go`,不添加参数直接编译运行是以 cmd 的窗口形式运行;
+
+:::
+
 ## 卸载结束停止后台进程
 
 确认 NSIS 安装目录下的 Plugins 目录下存在[FindProcDLL](https://nsis.sourceforge.io/FindProcDLL_plug-in),[KillProcDLL](https://nsis.sourceforge.io/KillProcDLL_plug-in),如果不存在则下载后放入即可(x86-ansi,x86-unicode 这两个目录都放入了),然后脚本`uninstall`里添加关闭进程，如下：
@@ -100,6 +107,7 @@ section "uninstall"
 sectionEnd
 ```
 
+**后台运行的进程，使用`FindProcDLL`然后`KillProcDLL`没有退出，请使用`taskkill`方式**
 :::
 
 ## 开机自启动
