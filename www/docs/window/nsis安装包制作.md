@@ -71,7 +71,7 @@ functionEnd
 
 ## 卸载结束停止后台进程
 
-确认 NSIS 安装目录下的 Plugins 目录下存在[FindProcDLL](https://nsis.sourceforge.io/FindProcDLL_plug-in),[KillProcDLL](https://nsis.sourceforge.io/KillProcDLL_plug-in),如果不存在则下载后放入即可(x86-ansi,x86-unicode 这两个目录都放入了),然后脚本`uninstall`里添加关闭进程，如下：
+确认 NSIS 安装目录下的 Plugins 目录下存在[FindProcDLL](https://nsis.sourceforge.io/FindProcDLL_plug-in),[KillProcDLL](https://nsis.sourceforge.io/KillProcDLL_plug-in),如果不存在则下载后放入即可(x86-ansi,x86-unicode 这两个目录都放入,ansi has deprecated),然后脚本`uninstall`里添加关闭进程，如下：
 
 ```log
 section "uninstall"
@@ -161,3 +161,12 @@ Section Uninstall
   #...
 SectionEnd
 ```
+
+:::caution 注意
+
+- 注册表`\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`里添加后，如果是需要管理员权限启动的程序无法自启动(即执行程序有个盾)，具体可以看下方的执行权限，这里修改安装路径到普通目录避免了执行权限的提升;
+- win + r 打开运行;搜索 shell:startup;将要自启软件的快捷方式拖到打开的目录;
+- 默认安装路径:[PROGRAMFILES](https://nsis.sourceforge.io/Reference/$PROGRAMFILES)
+- 执行权限:[RequestExecutionLevel](https://nsis.sourceforge.io/Reference/RequestExecutionLevel#:~:text=The%20value%20is%20embedded%20in%20the%20installer%20and,to%20prompt%20the%20user%20to%20verify%20privilege%20escalation.)
+
+:::
