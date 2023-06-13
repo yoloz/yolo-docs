@@ -53,7 +53,7 @@ git submodule update
 ## 删除 submodule
 
 :::note
-一种比较野的做法，不建议使用：主要步骤是直接移除模块，并手动修改 .gitmodules、.git/config 和 .git/modules 内容。包含了一大堆类似 git rm --cached <sub-module>、rm -rf <sub-moduel>、rm .gitmodules 和 git rm --cached 之类的代码。
+一种比较野的做法，不建议使用：主要步骤是直接移除模块，并手动修改 `.gitmodules`、`.git/config` 和 `.git/modules` 内容。包含了一大堆类似 `git rm --cached <sub-module>`、`rm -rf <sub-moduel>`、`rm .gitmodules` 和 `git rm --cached` 之类的代码。
 :::
 根据官方文档的说明，应该使用 `git submodule deinit` 命令卸载一个子模块。这个命令如果添加上参数 `--force`，则子模块工作区内即使有本地的修改，也会被移除。
 
