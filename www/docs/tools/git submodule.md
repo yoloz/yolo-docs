@@ -2,6 +2,8 @@
 
 使用 git submodule 功能时，主项目仓库并不会包含子模块的文件，只会保留一份子模块的配置信息及版本信息，作为主项目版本管理的一部分。
 
+## 创建 submodule
+
 :::note
 假定我们有两个项目：project-main 和 project-sub-1，其中 project-main 表示主项目，而 project-sub-1 表示子模块项目。
 
@@ -9,8 +11,6 @@
 
 接下来，我们希望在 project-main 中添加 project-sub-1 ，而又保持 project-sub-1 自身独立的版本控制。
 :::
-
-## 创建 submodule
 
 进入项目 `project-main` ，输入`git submodule add <submodule_url>`,此时项目仓库中会多出两个文件：`.gitmodules`(文件已经存在，则内部添加内容) 和 `project-sub-1`。内容如下：
 
