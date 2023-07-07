@@ -191,12 +191,32 @@ let obj = {
   // paragraph: Random.cparagraph(),
 };
 console.log(obj);
-
 ```
+
 :::note
-* 其中c开头的方法表示是生成中文，去掉c就会生成英文，如：
-  * Random.cparagraph() 生成一段中文;
-  * Random.paragraph() 生成一段英文;
+
+- 其中 c 开头的方法表示是生成中文，去掉 c 就会生成英文，如：
+  - Random.cparagraph() 生成一段中文;
+  - Random.paragraph() 生成一段英文;
 
 更多随机方法见[Mock.Random](https://github.com/nuysoft/Mock/wiki/Mock.Random)
+:::
+
+:::caution 注意
+
+```js
+import Mock, { Random } from "mockjs";
+```
+
+报错:
+
+```log
+6:02:36 PM [vite:mock] mock reload error SyntaxError: Named export 'Random' not found. The requested module 'mockjs' is a CommonJS module, which may not support all module.exports as named exports.
+CommonJS modules can always be imported via the default export, for example using:
+
+import pkg from 'mockjs';
+const { Random } = pkg;
+```
+
+而是通过别名 Mock 取 Random:`var Random = Mock.Random;`
 :::
