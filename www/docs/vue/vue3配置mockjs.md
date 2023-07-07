@@ -166,3 +166,37 @@ export default [
     }
 ] as MockMethod[]
 ```
+
+具体测试如下：
+
+```js
+var Mock = require("mockjs");
+var Random = Mock.Random;
+
+let obj = {
+  id: Random.id(), // 身份证号
+  guid: Random.guid(),
+  name: Random.cname(),
+  age: Random.integer(20, 50),
+  asset: Random.float(200, 500000, 1, 6),
+  married: Random.boolean(),
+  birth: Random.datetime("yyyy-MM-dd HH:mm:ss"), // 值是指定格式的日期字符串
+  // birth2: new Date(Random.datetime("yyyy-MM-dd HH:mm:ss")),  // 值是 Date 类型
+  addr: `${Random.province()}-${Random.city()}-${Random.county()}`,
+  email: Random.email("qq.com"),
+  // word: Random.cword(2, 5),
+  // string: Random.string(),
+  title: Random.ctitle(10, 15),
+  // senetence: Random.csentence(15, 20),
+  // paragraph: Random.cparagraph(),
+};
+console.log(obj);
+
+```
+:::note
+* 其中c开头的方法表示是生成中文，去掉c就会生成英文，如：
+  * Random.cparagraph() 生成一段中文;
+  * Random.paragraph() 生成一段英文;
+
+更多随机方法见[Mock.Random](https://github.com/nuysoft/Mock/wiki/Mock.Random)
+:::
