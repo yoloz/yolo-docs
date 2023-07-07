@@ -161,7 +161,7 @@ export default [
                 code: 200,
                 data: {
                     totalRow: 100,
-                    userlist  //前面无需添加`list:userlist`,userlist已经含有list
+                    list: [...userlist]  //userlist已经含有list
                 }
             }
         }
