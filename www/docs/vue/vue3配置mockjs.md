@@ -1,8 +1,7 @@
 ## 安装依赖
 
 ```bash
-$ pnpm install mockjs -D
-$ pnpm install vite-plugin-mock -D
+$ pnpm i mockjs vite-plugin-mock @types/mockjs -D
 ```
 
 ## 修改 vite.config.ts
@@ -11,7 +10,7 @@ $ pnpm install vite-plugin-mock -D
 import { viteMockServe } from "vite-plugin-mock";
 //...
 
-const localEnabled: boolean = (process.env.USE_MOCK as unknown as boolean) || false;
+const localEnabled: boolean = (process.env.VITE_USE_MOCK as unknown as boolean) || false;
 const prodEnabled: boolean = (process.env.USE_CHUNK_MOCK as unknown as boolean) || false;
 
 // https://vitejs.dev/config/
@@ -23,7 +22,7 @@ export default ({ mode }: any) =>
       //...
       viteMockServe({
         // 具体配置可见：https://www.viterc.cn/en/vite-plugin-mock.html
-        mockPath: "mock",
+        mockPath: "./src/mock",
         localEnabled: localEnabled,  // 开发打包开关
         prodEnabled: prodEnabled, // 生产打包开关
         supportTs: true, // 打开后，可以读取 ts 文件模块。 请注意，打开后将无法监视.js 文件。
@@ -36,7 +35,7 @@ export default ({ mode }: any) =>
 
 :::note
 
-- 'localEnabled' does not exist in type 'ViteMockOptions',暂时未解决，使用失败；
+- 'localEnabled' does not exist in type 'ViteMockOptions',查看源代码[vbenjs/vite-plugin-mock](https://github.com/vbenjs/vite-plugin-mock),发现开关统一到一个 enable 属性中，没有 localEnabled 和 prodEnabled 了
 
 :::
 
@@ -56,7 +55,7 @@ process.env.VITE_USE_MOCK 的定义， 有两种方案：
   }
 ```
 
-- 在根目录添加`.env.development`文件并配置:
+- 在根目录添加`.env.development`文件添加配置：
 
 ```txt
 # Whether to open mock
@@ -114,6 +113,56 @@ export default [
             return {
                 code: 200,
                 data: menuList
+            }
+        }
+    }
+] as MockMethod[]
+```
+
+## 生成数据
+
+```js
+import { MockMethod } from 'vite-plugin-mock'
+import Mock from 'mockjs'
+
+const userList = mockJS.mock({
+  "list|34": [
+    {
+      name: "@cname", //  随机生成姓名, 并且不重复
+      "id|+1": 1, // id自增一
+      entryData: Random.date("yyyy-MM-dd"),
+      "postion|1": [
+        "研发部经理",
+        "前端开发工程师",
+        "后端开发工程师",
+        "测试工程师",
+        "产品经理",
+        "UI设计师",
+        "架构师",
+        "运维工程师",
+      ],
+      "salary|1000-2000": 1000, // 薪资
+      "phone": /^1(3|4|5|6|7|8|9)[0-9]\d{8}$/,// 随机生成电话号码
+      "email": "@email"，// 随机生成邮箱
+      "sex|1": ["男", "女"],// 随机获取一个值
+      "age|18-35": 0,// 随机生成年龄，值在18-35之间
+      "address": "@city"// 随机生成城市名称
+
+    }
+  ]
+})
+
+export default [
+    {
+        url: '/user/list',
+        method: 'post',
+        response: () => {
+            return {
+                code: 200,
+                data: {
+                    totalRow: 100,
+                    userlist  //前面无需添加`list:userlist`,userlist已经含有list
+                }
             }
         }
     }
