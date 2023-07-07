@@ -126,6 +126,7 @@ import { MockMethod } from 'vite-plugin-mock'
 import Mock from 'mockjs'
 
 const userList = mockJS.mock({
+  totalRow: 100,
   "list|34": [
     {
       name: "@cname", //  随机生成姓名, 并且不重复
@@ -159,10 +160,7 @@ export default [
         response: () => {
             return {
                 code: 200,
-                data: {
-                    totalRow: 100,
-                    list: [...userlist]  //userlist已经含有list
-                }
+                data: userlist
             }
         }
     }
