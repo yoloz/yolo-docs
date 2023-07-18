@@ -102,7 +102,7 @@ b=2;a=1
 b=2;a=1
 b=3;a=3
 b=3;a=3
-<font color=red>b=3;a=1</font>
+<font style={{color: 'red'}}>b=3;a=1</font>
 b=3;a=3
 b=2;a=1
 b=3;a=3
@@ -208,7 +208,7 @@ volatile 是无法保证这三个操作是具有原子性的，我们可以通�
 - 线程所有的操作 happen-before 其他线程在该线程上调用 join 返回成功后的操作。
 - 如果 a happen-before b，b happen-before c，则 a happen-before c（传递性）。
 
-这里我们主要看下第三条：volatile 变量的保证有序性的规则。在[线程执行的特性](/java/thread/线程执行的特性)中提到过重排序分为编译器重排序和处理器重排序。为了实现 volatile 内存语义，JVM 会对 volatile 变量限制这两种类型的重排序。
+这里我们主要看下第三条：volatile 变量的保证有序性的规则。在[线程执行的特性](./线程执行特性.md)中提到过重排序分为编译器重排序和处理器重排序。为了实现 volatile 内存语义，JVM 会对 volatile 变量限制这两种类型的重排序。
 
 ### 内存屏障
 

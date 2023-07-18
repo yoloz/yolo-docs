@@ -165,7 +165,7 @@ public static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier, Executo
 
 runAsync 方法也好理解，它以 Runnable 函数式接口类型为参数，所以 CompletableFuture 的计算结果为空。
 
-supplyAsync 方法以 Supplier\<U\>函数式接口类型为参数,CompletableFuture 的计算结果类型为 U。
+supplyAsync 方法以 `Supplier<U>`函数式接口类型为参数,CompletableFuture 的计算结果类型为 U。
 
 因为方法的参数类型都是函数式接口，所以可以使用 lambda 表达式实现异步任务，比如：
 
@@ -187,7 +187,7 @@ public CompletableFuture<T> whenCompleteAsync(BiConsumer<? super T,? super Throw
 public CompletableFuture<T> exceptionally(Function<Throwable,? extends T> fn)
 ```
 
-可以看到 Action 的类型是 BiConsumer<? super T,? super Throwable>，它可以处理正常的计算结果，或者异常情况。
+可以看到 Action 的类型是 `BiConsumer<? super T,? super Throwable>`，它可以处理正常的计算结果，或者异常情况。
 方法不以 Async 结尾，意味着 Action 使用相同的线程执行，而 Async 可能会使用其它的线程去执行(如果使用相同的线程池，也可能会被同一个线程选中执行)。
 
 **注意这几个方法都会返回 CompletableFuture，当 Action 执行完毕后它的结果返回原始的 CompletableFuture 的计算结果或者返回异常。**
@@ -238,7 +238,7 @@ public <U> CompletableFuture<U> thenApplyAsync(Function<? super T,? extends U> f
 public <U> CompletableFuture<U> thenApplyAsync(Function<? super T,? extends U> fn, Executor executor)
 ```
 
-这一组函数的功能是当原来的 CompletableFuture 计算完后，将结果传递给函数 fn，将 fn 的结果作为新的 CompletableFuture 计算结果。因此它的功能相当于将 CompletableFuture<T>转换成 CompletableFuture\<U\>。
+这一组函数的功能是当原来的 CompletableFuture 计算完后，将结果传递给函数 fn，将 fn 的结果作为新的 CompletableFuture 计算结果。因此它的功能相当于将 `CompletableFuture<T>`转换成 `CompletableFuture<U>`。
 
 这三个函数的区别和上面介绍的一样，不以 Async 结尾的方法由原来的线程计算，以 Async 结尾的方法由默认的线程池 ForkJoinPool.commonPool()或者指定的线程池 executor 运行。Java 的 CompletableFuture 类总是遵循这样的原则，下面就不一一赘述了。
 
@@ -305,7 +305,7 @@ public CompletableFuture<Void> 	thenRunAsync(Runnable action)
 public CompletableFuture<Void> 	thenRunAsync(Runnable action, Executor executor)
 ```
 
-因此先前的 CompletableFuture 计算的结果被忽略了,这个方法返回 CompletableFuture<Void>类型的对象。
+因此先前的 CompletableFuture 计算的结果被忽略了,这个方法返回 `CompletableFuture<Void>`类型的对象。
 
 ```java
 CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
@@ -383,9 +383,9 @@ public <U> CompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> 
 public <U> CompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T,U> fn, Executor executor)
 ```
 
-acceptEither 方法是当任意一个 CompletionStage 完成的时候，action 这个消费者就会被执行。这个方法返回 CompletableFuture\<Void\>
+acceptEither 方法是当任意一个 CompletionStage 完成的时候，action 这个消费者就会被执行。这个方法返回 `CompletableFuture<Void>`
 
-applyToEither 方法是当任意一个 CompletionStage 完成的时候，fn 会被执行，它的返回值会当作新的 CompletableFuture\<U\>的计算结果。
+applyToEither 方法是当任意一个 CompletionStage 完成的时候，fn 会被执行，它的返回值会当作新的 `CompletableFuture<U>`的计算结果。
 
 下面这个例子有时会输出 100,有时候会输出 200,哪个 Future 先完成就会根据它的结果计算。
 

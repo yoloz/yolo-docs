@@ -79,7 +79,7 @@ keytool -genkeypair \
 - keystore 创建出的密钥生成路径，默认在当前目录创建证书库
 - storetype 生成证书类型，可用的证书库类型为：JKS、PKCS12 等。jdk9 以前，默认为 JKS。自 jdk9 开始，默认为 PKCS12。
 - storepass 指定密钥库的密码(获取 keystore 信息所需的密码)，最好与 keypass 一致
-- ext [X.509 extension](/security/X.509数字证书中的扩展项)
+- ext [X.509 extension](./X.509中的扩展项.md)
 
 ### 查看生成的证书
 

@@ -30,7 +30,7 @@
 
 ## synchronized 单条件变量管程模型
 
-Java 语言内置的管程（synchronized）对 MESA 模型进行了精简。MESA 模型中，条件变量可以有多个，[synchronized](./synchronized.md)里只有一个条件变量。
+Java 语言内置的管程（synchronized）对 MESA 模型进行了精简。MESA 模型中，条件变量可以有多个，[synchronized](./关键字synchronized.md)里只有一个条件变量。
 ![synchronized.png](/docs/concurrent/synchronized.png)
 
 :::tip
