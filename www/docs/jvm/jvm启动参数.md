@@ -94,12 +94,12 @@ _在日常性能调优中基本上都会用到以上黑体的这几个属性_
 | 参数及其默认值                                     | 描述                                                              |
 | :------------------------------------------------- | :---------------------------------------------------------------- |
 | -XX:-CITime                                        | 打印消耗在 JIT 编译的时间                                         |
-| -XX:ErrorFile=./hs_err_pid\<pid\>.log              | 保存错误日志或者数据到文件中                                      |
+| -XX:ErrorFile=`./hs_err_pid<pid>.log`              | 保存错误日志或者数据到文件中                                      |
 | -XX:-ExtendedDTraceProbes                          | 开启 solaris 特有的 dtrace 探针                                   |
 | **-XX:HeapDumpPath=./java_pid\<pid\>.hprof**       | **指定导出堆信息时的路径或文件名**                                |
 | **-XX:-HeapDumpOnOutOfMemoryError**                | **当首次遭遇 OOM 时导出此时堆中相关信息**                         |
-| -XX:OnError="\<cmd args\>;\<cmd args\>"            | 出现致命 ERROR 之后运行自定义命令                                 |
-| -XX:OnOutOfMemoryError="\<cmd args\>;\<cmd args\>" | 当首次遭遇 OOM 时执行自定义命令                                   |
+| -XX:OnError=`"<cmd args>;<cmd args>"`            | 出现致命 ERROR 之后运行自定义命令                                 |
+| -XX:OnOutOfMemoryError=`"<cmd args>;<cmd args>"` | 当首次遭遇 OOM 时执行自定义命令                                   |
 | -XX:-PrintClassHistogram                           | 遇到 Ctrl-Break 后打印类实例的柱状信息，与 jmap -histo 功能相同   |
 | **-XX:-PrintConcurrentLocks**                      | **遇到 Ctrl-Break 后打印并发锁的相关信息，与 jstack -l 功能相同** |
 | -XX:-PrintCommandLineFlags                         | 打印在命令行中出现过的标记                                        |

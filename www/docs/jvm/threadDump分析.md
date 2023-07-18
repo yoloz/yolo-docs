@@ -29,7 +29,7 @@ dump 文件中的线程状态含义及注意事项:
 
 - Waiting for monitor entry 和 in Object.wait()
 
-![threaddump1.png](/docs/java/threaddump1.png)
+![threaddump1.png](/docs/jvm/threaddump1.png)
 
 Monitor 是 Java 中用以实现线程之间的互斥与协作的主要手段，它可以看成是对象或者 Class 的锁。每一个对象都有，也仅有一个 monitor。从图中可以看出，每个 Monitor 在某个时刻，只能被一个线程拥有，该线程就是 “Active Thread”，而其它线程都是 “Waiting Thread”，分别在两个队列 “ Entry Set”和 “Wait Set”里面等候。在 “Entry Set”中等待的线程状态是 “Waiting for monitor entry”，而在 “Wait Set”中等待的线程状态是 “in Object.wait()”。
 
