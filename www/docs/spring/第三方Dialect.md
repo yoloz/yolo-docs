@@ -65,8 +65,9 @@ private static Dialect getDialect(Connection connection) throws SQLException {
 ```xml
 <dependency>
     <groupId>org.springframework.data</groupId>
-    <artifactId>spring-data-relational</artifactId>
+    <artifactId>spring-data-jdbc</artifactId>
     <version>3.1.0</version>
+    <!-- 无需打包进jar中 -->
     <scope>compile</scope>
 </dependency>
 ```
