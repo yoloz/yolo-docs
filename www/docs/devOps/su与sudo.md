@@ -132,3 +132,36 @@ echo “export PATH” | sudo tee -a /etc/profile
 :::caution
 tee 命令 “-a” 选项的作用等同于 “>>” 命令，如果去除该选项，那么 tee 命令的作用就等同于 “>” 命令。
 :::
+
+解决方法三：
+:::note
+Here Document 是在 Linux Shell 中的一种特殊的重定向方式，它的基本的形式如下:
+
+```bash
+cmd << delimiter
+  Here Document Content
+delimiter
+```
+
+其作用是将两个 `delimiter` 之间的内容(Here Document Content 部分) 传递给 cmd 作为输入参数;
+
+利用`here-document`:
+
+```bash
+#-s, --shell  run shell as the target user; a command may also be specified
+sudo -s <<EOF
+
+echo "PATH=$PATH:/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin/" >> /etc/profile
+echo "export PATH" >> /etc/profile
+
+EOF
+
+sudo -s <<EOF
+echo "********install mysql********"
+${path}/bin/mysql_install.sh
+
+echo "********install redis********"
+${path}/bin/redis_install.sh
+
+EOF
+```
