@@ -36,48 +36,6 @@
 </plugin>
 ```
 
-## 'dependencies.dependency.systemPath' for...
-
-原始写法
-
-```xml
-<dependency>
-    <groupId>com.cloudera.hive</groupId>
-    <artifactId>hive-jdbc</artifactId>
-    <version>2.6.13</version>
-    <scope>system</scope>
-    <systemPath>${project.basedir}/../ext/HiveJDBC42.jar</systemPath>
-</dependency>
-```
-
-告警详情:
-
-```log
-$ mvn clean package -DskipTests
-[INFO] Scanning for projects...
-[WARNING]
-[WARNING] Some problems were encountered while building the effective model for com.zhds:ui-common:jar:3.0
-[WARNING] 'dependencies.dependency.systemPath' for com.cloudera.hive:hive-jdbc:jar should not point at files within the project directory, ${project.basedir}/../ext/HiveJDBC42.jar will be unresolvable by dependent projects @ line 66, column 25
-[WARNING]
-[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
-[WARNING]
-[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
-[WARNING]
-
-```
-
-- 使用`pom.basedir`
-
-```xml
-<dependency>
-    <groupId>com.cloudera.hive</groupId>
-    <artifactId>hive-jdbc</artifactId>
-    <version>2.6.13</version>
-    <scope>system</scope>
-    <systemPath>${pom.basedir}/../ext/HiveJDBC42.jar</systemPath>
-</dependency>
-```
-
 ## springboot 打包本地 jar
 
 spring boot 打包将<scope>system</scope>的 jar 包含进去:
