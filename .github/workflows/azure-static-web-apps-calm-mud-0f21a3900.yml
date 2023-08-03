@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - docusaurus
-  # pull_request:
+  pull_request:
   #   types: [opened, synchronize, reopened, closed]
   #   branches:
   #     - docusaurus
