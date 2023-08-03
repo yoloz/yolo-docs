@@ -1,43 +1,43 @@
-name: Deploy to GitHub Pages
+# name: Deploy to GitHub Pages
 
-on:
-  push:
-    branches:
-      - docusaurus
-    paths:
-      - '.github/workflows/github-deploy.yml'
-      - 'www/**'
-  pull_request:
+# on:
+#   push:
+#     branches:
+#       - docusaurus
+#     paths:
+#       - '.github/workflows/github-deploy.yml'
+#       - 'www/**'
+#   pull_request:
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    defaults:
-      run:
-        working-directory: www
-    steps:
-      - uses: actions/checkout@v3
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: write
+#     defaults:
+#       run:
+#         working-directory: www
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: npm
-          # The action defaults to search for the dependency file(package-lock.json or yarn.lock) in the repository root, 
-          # and uses its hash as a part of the cache key.https://github.com/actions/setup-node#caching-packages-dependencies
-          cache-dependency-path: "./www/package-lock.json"
+#       - name: Setup Node
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 18
+#           cache: npm
+#           # The action defaults to search for the dependency file(package-lock.json or yarn.lock) in the repository root, 
+#           # and uses its hash as a part of the cache key.https://github.com/actions/setup-node#caching-packages-dependencies
+#           cache-dependency-path: "./www/package-lock.json"
 
-      - name: Install dependencies
-        run: npm install --frozen-lockfile
-      - name: Build pages  
-        run: npm run build
+#       - name: Install dependencies
+#         run: npm install --frozen-lockfile
+#       - name: Build pages  
+#         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./www/build
-          user_name: yoloz
-          user_email: youloz@outlook.com
+#       - name: Deploy to GitHub Pages
+#         uses: peaceiris/actions-gh-pages@v3
+#         with:
+#           github_token: ${{ secrets.GITHUB_TOKEN }}
+#           publish_dir: ./www/build
+#           user_name: yoloz
+#           user_email: youloz@outlook.com
