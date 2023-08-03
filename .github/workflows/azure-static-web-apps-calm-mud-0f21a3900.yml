@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - docusaurus
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - docusaurus
+  # pull_request:
+  #   types: [opened, synchronize, reopened, closed]
+  #   branches:
+  #     - docusaurus
 
 jobs:
   build_and_deploy_job:
