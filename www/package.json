@@ -1,10 +1,10 @@
 {
   "name": "yolo-docs",
   "version": "0.0.0",
-  "private": false,
+  "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start --host 0.0.0.0",
+    "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
