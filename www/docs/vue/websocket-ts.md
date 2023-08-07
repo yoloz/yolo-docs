@@ -33,7 +33,7 @@ class Messages {
         for (let i = 0; i < this.messages.length; i++) {
             const message = this.messages[i]
             if (message.type === type) {
-                return message
+                return message.data
             }
         }
         return undefined
