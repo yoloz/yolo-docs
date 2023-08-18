@@ -1,4 +1,4 @@
-## mysql-apt-config
+## 安装
 
 [MySQL Community Downloads](https://dev.mysql.com/downloads/)
 
