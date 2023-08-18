@@ -1,3 +1,11 @@
+## mysql-apt-config
+
+[MySQL Community Downloads](https://dev.mysql.com/downloads/)
+
+- MySQL APT Repository
+
+  通过 apt 安装，下载`mysql-apt-config`遇到系统版本低不适配，如提供的下载地址`https://repo.mysql.com//mysql-apt-config_0.8.26-1_all.deb`，可以手动修改其中的数字下载低版本适配系统`****_0.8.20-1_all.deb`
+
 ## limit 语句
 
 ```sql

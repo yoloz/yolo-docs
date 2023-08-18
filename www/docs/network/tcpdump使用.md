@@ -1,4 +1,4 @@
-有時候設定一些跟網路相關的服務 PXE , DHCP , FTP , TFTP , HTTP …,服務雖然是啟動的,但部分功能卻是有問題,這時候可透過 #tcpdump 這個指令來觀看封包 TCP Package / Frame 的狀況.
+有时候设定一些跟网络相关的服务 PXE , DHCP , FTP , TFTP , HTTP …,服务虽然是启动的,但部分功能却是有问题,这时候可通过 `tcpdump` 这个指令来看封包`TCP Package / Frame` 的狀況.
 
 測試環境為 Ubuntu 16.04 64bits
 
@@ -139,4 +139,8 @@ $ tcpdump tcp port 8080 and host 122.233.27.32
 
 #抓包并写进文件
 $ tcpdump tcp -s 0 and host 192.168.1.176 -w ./176_b.cap
+
+#基于网段进行过滤
+tcpdump net 192.168.10.0/24
+tcpdump dst net 192.168
 ```
