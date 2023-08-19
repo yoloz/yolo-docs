@@ -36,20 +36,6 @@
 </plugin>
 ```
 
-## springboot 打包本地 jar
-
-spring boot 打包将<scope>system</scope>的 jar 包含进去:
-
-```xml
-<plugin>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-maven-plugin</artifactId>
-    <configuration>
-        <includeSystemScope>true</includeSystemScope>
-    </configuration>
-</plugin>
-```
-
 ## Blocked mirror for repositories
 
 Maven 在升级到 3.8.1 以后，从安全角度考虑，默认将非 https 的远端仓库屏蔽掉了
@@ -103,3 +89,9 @@ maven-shade-plugin 插件有个配置属性:createDependencyReducedPom,默认值
 那么这个 dependency-reduced-pom.xml 有什么用呢？
 
 我们如果在另一个工程 B 中引用了 A 工程对应的 A.jar，而且 B 也依赖了 spring-boot-starter-tomcat，那么我们在 B 工程中就不需要再依赖 spring-boot-starter-tomcat 了，这样可以避免重复引用。
+
+## Plugin validation issues were detected in 1 plugin(s)
+
+> For more or less details, use 'maven.plugin.validation' property with one of the values (case insensitive): [BRIEF, DEFAULT, VERBOSE]
+
+`mvn -Dmaven.plugin.validation=verbose ...`

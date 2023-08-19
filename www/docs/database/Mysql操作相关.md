@@ -6,6 +6,38 @@
 
   通过 apt 安装，下载`mysql-apt-config`遇到系统版本低不适配，如提供的下载地址`https://repo.mysql.com//mysql-apt-config_0.8.26-1_all.deb`，可以手动修改其中的数字下载低版本适配系统`****_0.8.20-1_all.deb`
 
+## 数据库改名
+
+> 如果表示 MyISAM 那么可以直接去到数据库目录 mv 就可以。
+
+Innodb：
+
+- 第一种方法：
+
+  `RENAME database olddbname TO newdbname`这个是 5.1.7 到 5.1.23 版本可以用的，但是官方不推荐，会有丢失数据的危险
+
+- 第二种方法：
+
+  mysqldump 导出要改名的数据库,然后再导入(数据量大耗时)
+
+- 第三种方法：
+
+  通过表来间接实现库的移动：
+
+```bash
+#!/bin/bash
+# 假设将sakila数据库名改为new_sakila
+# MyISAM直接更改数据库目录下的文件即可
+
+mysql -uroot -p123456 -e 'create database if not exists new_sakila'
+list_table=$(mysql -uroot -p123456 -Nse "select table_name from information_schema.TABLES where TABLE_SCHEMA='sakila'")
+
+for table in $list_table
+do
+    mysql -uroot -p123456 -e "rename table sakila.$table to new_sakila.$table"
+done
+```
+
 ## limit 语句
 
 ```sql
