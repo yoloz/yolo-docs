@@ -13,65 +13,46 @@ $ npm install websocket-ts
 在 Vue 3 中，可以在组件中通过 setup 函数创建 WebSocket 实例，并将其添加到组件的上下文中
 
 ```js
-import { ref } from 'vue'
-import { WebsocketBuilder, ConstantBackoff } from 'websocket-ts'
+import { WebsocketBuilder } from "websocket-ts";
 
-interface Message<T> {
-    type: string
-    message: T
-
-}
-
-class Messages {
-    private messages: Message<any>[]
-
-    constructor(messages: any) {
-        this.messages = messages
-    }
-
-    public getMessage(type: string): any {
-        for (let i = 0; i < this.messages.length; i++) {
-            const message = this.messages[i]
-            if (message.type === type) {
-                return message.data
-            }
-        }
-        return undefined
-    }
-
-    public setMessage(message: Message<any>) {
-        let exist = false
-        for (let i = 0; i < this.messages.length; i++) {
-            const msg = this.messages[i]
-            if (msg.type === message.type) {
-                this.messages[i] = message
-                exist = true
-                break
-            }
-        }
-        if (!exist) {
-            this.messages.push(message)
-        }
-    }
-}
-
-export const messages = ref<Messages>()
+import { useMenuStore } from "@/stores/menuStore";
 
 export const ws = new WebsocketBuilder(import.meta.env.VITE_SOCKET_SERVER_URL)
-    .onMessage((i, e) => { messages.value?.setMessage(e.data) })
+  .onMessage((_ins, e) => {
+    const { updateRouterMenu } = useMenuStore();
+    const obj = JSON.parse(e.data);
+    if (obj.type === "routerMenu") {
+      updateRouterMenu(obj.data);
+    }
+  })
+  .onError((_ins, e) => {
     // eslint-disable-next-line no-console
-    .onError((i, e) => { console.warn('websock has error...') })
-    .withBackoff(new ConstantBackoff(1000))
-    .build()
+    console.warn("websock has error..." + e);
+  })
+  // .withBackoff(new ConstantBackoff(100))
+  .build();
 ```
 
 ## 发送消息
 
 ```js
-import { ws } from "上文ts文件";
-
-ws.send("xxxx");
+async function wsload(userId: number, ref: Ref<any>) {
+  if (ws.underlyingWebsocket?.readyState === ws.underlyingWebsocket?.OPEN) {
+    ws.send("routerMenu_" + userId);
+  } else if (
+    ws.underlyingWebsocket?.readyState === ws.underlyingWebsocket?.CONNECTING
+  ) {
+    ws.addEventListener(WebsocketEvents.open, (i, e) => {
+      i.send("routerMenu_" + userId);
+    });
+  } else {
+    return new Error("WS connection error...");
+  }
+  return waitRouterMenu(ref);
+}
 ```
+
+> 浏览器刷新 websocket 会重新建立连接，状态是 CONNECTING，需要添加 OPEN 事件;
 
 ## 清理和销毁
 

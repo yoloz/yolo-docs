@@ -254,6 +254,11 @@ git push origin <branchName>  #将新分支推送到远程repo上
 
 git branch -d <branchName>  #删除本地分支
 git push origin --delete <branchName> #删除远程分支
+
+# 重命名分支
+git branch -m new_branch_name
+# 改名后重新关联远程仓库分支
+git push -u origin "remote_branch_name"
 ```
 
 清除远程分支的本地缓存(`remote ref does not exist`):

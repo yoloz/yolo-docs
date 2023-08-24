@@ -95,3 +95,32 @@ maven-shade-plugin 插件有个配置属性:createDependencyReducedPom,默认值
 > For more or less details, use 'maven.plugin.validation' property with one of the values (case insensitive): [BRIEF, DEFAULT, VERBOSE]
 
 `mvn -Dmaven.plugin.validation=verbose ...`
+
+## 打包排除 resources 文件
+
+```xml
+<build>
+    <resources>
+        <resource>
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.xml</include>
+            </includes>
+        </resource>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+            <!-- 排除resources 文件下指定资源文件 -->
+            <excludes>
+                <exclude>templates/**</exclude>
+                <exclude>dp/**</exclude>
+            </excludes>
+        </resource>
+    </resources>
+    <plugins>
+    <!-- ..... -->
+    </plugins>
+</build>
+```
