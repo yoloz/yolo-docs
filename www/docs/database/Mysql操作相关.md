@@ -38,13 +38,6 @@ do
 done
 ```
 
-## limit 语句
-
-```sql
-select * from "operativeLogs" ORDER BY "sysTimestamp" DESC LIMIT 5 OFFSET 5    #postgresql
-select * from "operativeLogs" ORDER BY "sysTimestamp" DESC LIMIT 5,10        #mysql
-```
-
 ## 导入导出查询结果
 
 ```bash
