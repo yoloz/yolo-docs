@@ -85,7 +85,7 @@ export TZ="Asia/Shanghai"
 EOF
 ```
 
-:::cation 注意
+:::caution 注意
 如果是集群，必须在所有节点上将 TZ 变量设置为相同的值;
 :::
 
@@ -158,6 +158,7 @@ zhds@vertica:~$ su dbadmin
 #Password:
 dbadmin@vertica:/home/zhds$ /opt/vertica/bin/adminTools
 # create database,第一步证书Tab键直接选择OK使用社区版
+# 下一步view证书，通过space键选择accept
 
 ```
 
