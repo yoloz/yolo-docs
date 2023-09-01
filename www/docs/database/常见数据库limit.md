@@ -41,6 +41,12 @@ SELECT * FROM XXX WHERE ROWNUM < 21 MINUS SELECT * FROM XXX WHERE ROWNUM < 11;
 SELECT * FROM (SELECT ROWNUM NO, t1.* FROM XXX t1) t2 WHERE t2.NO > 10 AND t2.NO < 21;
 
 -- select * from XXX where rownum > 10 and rownum < 21 会返回空结果集
+
+-- Oracle >=12 Syntax(rownum新老版本都可用):
+SELECT column_name(s)
+FROM table_name
+ORDER BY column_name(s)
+FETCH FIRST count ROWS ONLY;
 ```
 
 > - rownum 是根据 sql 查询出的结果给每行分配一个逻辑编号；
@@ -56,6 +62,8 @@ FROM table_name;
 select top 5 * from table
 --后5行
 select top 5 * from table order by id desc
+-- SELECT TOP 20 sfzh,birth FROM dbo.person
+
 ```
 
 > - count 指定要返回的最大行数;
