@@ -71,3 +71,47 @@ The Checkstyle Plugin has three goals:
 
 > If you want to report to the console or fail the build, you must add an execution of `checkstyle::check` to the `<build>` element and configure any options that you need.  
 > 插件提供两种预先定义的规则：`sun_checks.xml`和`google_checks.xml`,当然你也可以指定自定义的规则集。
+
+## 某些文件规则过滤
+
+- checkstyle-suppression.xml:
+
+```xml
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <!-- Variant.java 全部忽略 -->
+    <suppress files="Variant.java" checks=".*"/>
+    <!-- ColumnMeta.java 忽略MethodLength检查 -->
+    <suppress files="ColumnMeta.java" checks="MethodLength"/>
+</suppressions>
+```
+
+- pom.xml:
+
+```xml
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-checkstyle-plugin</artifactId>
+  <version>3.3.0</version>
+  <configuration>
+      <configLocation>${pom.basedir}/src/main/resources/checkstyle.xml</configLocation>
+      <suppressionsLocation>${pom.basedir}/src/main/resources/checkstyle-suppression.xml</suppressionsLocation>
+      <consoleOutput>true</consoleOutput>
+      <failsOnError>true</failsOnError>
+  </configuration>
+  <executions>
+      <execution>
+          <id>validate</id>
+          <phase>validate</phase>
+          <goals>
+              <goal>check</goal>
+          </goals>
+      </execution>
+  </executions>
+ </plugin>
+```

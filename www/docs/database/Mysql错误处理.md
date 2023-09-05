@@ -58,3 +58,13 @@ chmod +x /etc/init.d/mysqld
 /etc/init.d/mysqld start
 # ...
 ```
+
+## unknown variable
+
+`mysql: [ERROR] unknown variable 'basedir=xxx'`
+mysql 的配置文件(my.cnf,my.ini)格式错误，如头不是`[mysqld]`
+
+## the server quit without updating PID file
+
+启动 mysql 报错`the server quit without updating PID file...`
+原因是配置文件(my.cnf)中有配置不支持或者错误，查看 mysql 数据库 data 目录里的`xxx.err`文件可知。
