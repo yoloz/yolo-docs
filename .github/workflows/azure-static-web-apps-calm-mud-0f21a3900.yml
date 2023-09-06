@@ -16,7 +16,7 @@ jobs:
     name: Build and Deploy Job
     steps:
       - uses: actions/checkout@v2
-        with:
+        # with:
           # submodules: true
       - name: Build And Deploy
         id: builddeploy
