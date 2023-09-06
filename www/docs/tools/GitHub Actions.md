@@ -18,13 +18,20 @@ To add an exception for this directory, call:
 
 上述通过修改`entrypoint.sh`，添加`git config --global --add safe.directory /github/workspace`
 
-现在情况是使用[`actions/checkout@v2`](https://github.com/actions/checkout)
+通过添加：
 
 ```yml
 # ...
-- uses: actions/checkout@v2
-        with:
-          # submodules: true
+- name: Set safe directory
+  run: git config --global --add safe.directory /github/workspace
 # ...
 ```
-注释掉`submodules`，[When set-safe-directory is true the checked out submodule paths should be added to safe.directory](https://github.com/actions/checkout/issues/904)
+
+仍然报错，查看[Falied to retrieve git history for files in Docusarus build](https://github.com/Seneca-CDOT/telescope/issues/3403)移除配置文件里的：
+
+```js
+showLastUpdateAuthor: true,
+showLastUpdateTime: true,
+```
+
+> Since we are not copying the git history inside the Docker container, Docusaurus cannot find anything.

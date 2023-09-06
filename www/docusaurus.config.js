@@ -40,7 +40,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/yoloz/yolo-docs/tree/docusaurus/',
-          showLastUpdateTime: true,
+          // showLastUpdateTime: true,
         },
         blog: {
           showReadingTime: true,
