@@ -42,7 +42,7 @@ public void case1(){
 
 ### 下载
 
-下载链接：https://www.bouncycastle.org/latest_releases.html，下拉页面到**SIGNED JAR FILES\*\*，从其列表中下载：JDK 1.8 and later 行的`bcprov-jdk18on-173.jar`，`bcprov-ext-jdk18on-173.jar`
+[下载链接](https://www.bouncycastle.org/latest_releases.html)，下拉页面到`SIGNED JAR FILES`，从其列表中下载：`JDK 1.8 and later` 行的`bcprov-jdk18on-173.jar`，`bcprov-ext-jdk18on-173.jar`
 
 :::note
 通常使用到的是 bcprov 库,bcprov-ext 包含一些晦涩的加密算法，这些算法自 v1.4.0 以来一直未包含在主要版本中。

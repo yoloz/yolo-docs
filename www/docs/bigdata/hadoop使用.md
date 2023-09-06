@@ -120,7 +120,7 @@ $HADOOP_HOME/sbin/hadoop-daemon.sh stop namenode
 
 ## Hadoop 中的 ProxyUser
 
-链接：https://www.jianshu.com/p/a27bc8651533
+[链接](https://www.jianshu.com/p/a27bc8651533)
 
 Hadoop2.0 版本开始支持 ProxyUser 的机制。含义是使用 User A 的用户认证信息，以 User B 的名义去访问 hadoop 集群。对于服务端来说就认为此时是 User B 在访问集群，相应对访问请求的鉴权（包括 HDFS 文件系统的权限，YARN 提交任务队列的权限）都以用户 User B 来进行。User A 被认为是 superuser（这里 superuser 并不等同于 hdfs 中的超级用户，只是拥有代理某些用户的权限，对于 hdfs 来说本身也是普通用户），User B 被认为是 proxyuser。
 

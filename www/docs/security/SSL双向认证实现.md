@@ -127,8 +127,11 @@ $> openssl pkcs12 -export -clcerts -in ca_root.crt -inkey ca_root.key -out ca_ro
    `keytool -importcert -file ca.crt -alias CARoot -keystore 1-183-truststore.p12 -storetype pkcs12`
 
 > 问题：No subject alternative names present
+>
 > 密钥库可以添加 SAN(-ext SAN=),但是安装证书回复后 server.jks 中 SAN 就没了
+>
 > 生成请求文件时也可以添加 SAN(密钥库生成的请求文件中不会自动带上 SAN),但是签证后生成的证书 server.pem 中仍会没有 SAN
+>
 > 解决:在签证的时候添加 SAN(-extfile file) [Subject Alternative Name](https://www.openssl.org/docs/man1.1.1/man5/x509v3_config.html)
 
 ### 3. 注册客户端证书
