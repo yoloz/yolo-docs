@@ -3,8 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - docusaurus
-      # - gh-pages
+      # - docusaurus
+      - gh-pages
     paths:
       - ".github/workflows/github-deploy.yml"
       - "www/**"
