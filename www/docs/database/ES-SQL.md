@@ -25,11 +25,11 @@
 [Standalone Elasticsearch plugin installation](https://opendistro.github.io/for-elasticsearch-docs/docs/install/plugins/)
 
 ```bash
->: sudo bin/elasticsearch-plugin install https://d3g5vo6xdbdb9a.cloudfront.net/downloads/elasticsearch-plugins/opendistro-sql/opendistro-sql-1.13.2.0.zip
+$ sudo bin/elasticsearch-plugin install https://d3g5vo6xdbdb9a.cloudfront.net/downloads/elasticsearch-plugins/opendistro-sql/opendistro-sql-1.13.2.0.zip
 
->: sudo bin/elasticsearch-plugin install file:///home/ylz/opendistro-sql-1.13.2.0.zip
+$ sudo bin/elasticsearch-plugin install file:///home/ylz/opendistro-sql-1.13.2.0.zip
 
->: sudo bin/elasticsearch-plugin remove <plugin-name>
+$ sudo bin/elasticsearch-plugin remove <plugin-name>
 
 ```
 

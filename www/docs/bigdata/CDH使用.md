@@ -15,7 +15,7 @@ $ sudo ./cloudera-manager-installer.bin
 
 :::
 
-2. 通过页面继续安装,地址:http://ip:7180 用户密码 admin/admin
+2. 通过页面继续安装,地址:`http://ip:7180` 用户密码 `admin/admin`
 
 在提供 SSH 登录凭据这一步骤中需要 sudo 无密码，可如下操作:
 

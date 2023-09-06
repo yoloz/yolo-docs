@@ -15,7 +15,7 @@ yolo@rkn:~$ sudo dpkg -i openvpn-as-latest-debian11.amd_64.deb
 yolo@rkn:~$ sudo apt install -f
 ```
 
-登陆 https://[youripaddress]/后可以修改生成的随机密码
+登陆 `https://[youripaddress]/` 后可以修改生成的随机密码
 :::
 
 ## 安装

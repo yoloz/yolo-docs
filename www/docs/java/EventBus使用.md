@@ -183,8 +183,8 @@ public interface SubscriberExceptionHandler {
 
 ## 参考
 
-https://github.com/google/guava
+[https://github.com/google/guava](https://github.com/google/guava)
 
-https://github.com/greenrobot/EventBus
+[https://github.com/greenrobot/EventBus](https://github.com/greenrobot/EventBus)
 
-https://github.com/ReactiveX/RxJava
+[https://github.com/ReactiveX/RxJava](https://github.com/ReactiveX/RxJava)

@@ -190,7 +190,7 @@ public interface Protocol {
 
 在 Protocol 接口上，增加了一个 @SPI 注解，而注解的 value 值为 Dubbo ，通过 SPI 获取实现时就会获取 Protocol SPI 配置中别名为 dubbo 的那个实现，com.alibaba.dubbo.rpc.Protocol 文件如下：
 
-```properties
+```log
 filter=com.alibaba.dubbo.rpc.protocol.ProtocolFilterWrapper
 listener=com.alibaba.dubbo.rpc.protocol.ProtocolListenerWrapper
 mock=com.alibaba.dubbo.rpc.support.MockProtocol
@@ -271,7 +271,6 @@ Spring 的 SPI 虽然属于 spring-framework(core)，但是目前主要用在 sp
 org.springframework.boot.logging.LoggingSystemFactory=\
 com.example.log4j2demo.Log4J2LoggingSystem.Factory
 ```
-
 
 三种 SPI 机制对比之下，JDK 内置的机制是最弱鸡的，但是由于是 JDK 内置，所以还是有一定应用场景，毕竟不用额外的依赖；Dubbo 的功能最丰富，但机制有点复杂了，而且只能配合 Dubbo 使用，不能完全算是一个独立的模块；Spring 的功能和 JDK 的相差无几，最大的区别是所有扩展点写在一个 spring.factories 文件中，也算是一个改进，并且 IDEA 完美支持语法提示。
 

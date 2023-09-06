@@ -22,7 +22,7 @@ Maven 仓库用于存放不同编译的 artifacts 和 dependencies 的模块集�
 </distributionManagement>
 ```
 
-或者直接[命令行](https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html)添加参数`mvn deploy -DaltDeploymentRepository=mavenrepo::file:/home/${user}/.m2/mavenrepo`
+或者直接[命令行](https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html) 添加参数`mvn deploy -DaltDeploymentRepository=mavenrepo::file:/home/${user}/.m2/mavenrepo`
 
 :::info
 一般无需在`build`里添加`maven-deploy-plugin`，要添加额外配置如：[Deploying With Network Issues](https://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-network-issues.html)

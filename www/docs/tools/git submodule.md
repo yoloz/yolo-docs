@@ -7,7 +7,7 @@
 :::note
 假定我们有两个项目：project-main 和 project-sub-1，其中 project-main 表示主项目，而 project-sub-1 表示子模块项目。
 
-其中 project-main 的远程仓库地址为 https://github.com/username/project-main.git，而 project-sub-1 的远程仓库地址为 https://github.com/username/project-sub-1.git。
+其中 project-main 的远程仓库地址为 `https://github.com/username/project-main.git`，而 project-sub-1 的远程仓库地址为 `https://github.com/username/project-sub-1.git`。
 
 接下来，我们希望在 project-main 中添加 project-sub-1 ，而又保持 project-sub-1 自身独立的版本控制。
 :::
@@ -29,7 +29,7 @@ url = https://github.com/username/project-sub-1.git
 
 上述步骤在创建子模块的过程中，会自动将相关代码克隆到对应路径，但对于后续使用者而言，对于主项目使用普通的 `clone` 操作并不会拉取到子模块中的实际代码。
 
-使用命令`git clone https://github.com/username/project-main.git`完成后 `project-main/project-sub-1` 文件夹是空的。
+使用命令`git clone https://github.com/username/project-main.git` 完成后 `project-main/project-sub-1` 文件夹是空的。
 
 如果希望子模块代码也获取到，一种方式是在克隆主项目的时候带上参数：`git clone --recursive https://github.com/username/project-main.git`。
 

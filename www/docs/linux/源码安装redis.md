@@ -2,7 +2,7 @@
 
 详见：[Install Redis from Source](https://redis.io/docs/getting-started/installation/install-redis-from-source/)
 
-1. 下载源码：`wget https://download.redis.io/redis-stable.tar.gz`或者具体版本；
+1. 下载源码：`wget https://download.redis.io/redis-stable.tar.gz` 或者具体版本；
 2. 编码源码
 
 ```bash

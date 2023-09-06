@@ -27,7 +27,7 @@ To add an exception for this directory, call:
 # ...
 ```
 
-仍然报错，查看[Falied to retrieve git history for files in Docusarus build](https://github.com/Seneca-CDOT/telescope/issues/3403)移除配置文件里的：
+仍然报错，查看[Falied to retrieve git history for files in Docusarus build](https://github.com/Seneca-CDOT/telescope/issues/3403) 移除配置文件里的：
 
 ```js
 showLastUpdateAuthor: true,

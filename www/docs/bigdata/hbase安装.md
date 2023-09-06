@@ -4,7 +4,7 @@
 
 `tar -zxvf hbase-2.2.4-bin.tar.gz -C ~`
 
-解压后执行`bin/start-hbase.sh`即可，浏览器访问http://ip:16010
+解压后执行`bin/start-hbase.sh`即可，浏览器访问`http://ip:16010`
 
 常用命令如下:
 
