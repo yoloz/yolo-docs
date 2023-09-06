@@ -36,3 +36,9 @@ This is a [Docusaurus-powered](https://docusaurus.io) site to document collectio
 |  | |
 
 <br/>
+
+## 4. Deploying to Azure Static Web Apps
+
+Get started in a few minutes by following [this step-by-step guide](https://dev.to/azure/11-share-content-with-docusaurus-azure-static-web-apps-30hc).
+
+Tutorial source is here [on GitHub](https://github.com/fearlessly-dev/swa-demo-docusaurus)
