@@ -32,6 +32,7 @@ jobs:
           ###### Repository/Build Configurations ######
           app_location: "/www"  # App source code path relative to repository root
           app_build_command: "npm run clear && npm run build"
+          output_location: "build" # Built app content directory
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
