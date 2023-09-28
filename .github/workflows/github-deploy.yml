@@ -3,8 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      # - docusaurus
-      - gh-pages
+      - docusaurus
     paths:
       - ".github/workflows/github-deploy.yml"
       - "www/**"
@@ -24,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 16
           cache: npm
           # The action defaults to search for the dependency file(package-lock.json or yarn.lock) in the repository root,
           # and uses its hash as a part of the cache key.https://github.com/actions/setup-node#caching-packages-dependencies
