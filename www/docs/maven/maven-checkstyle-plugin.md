@@ -74,6 +74,8 @@ The Checkstyle Plugin has three goals:
 
 ## 某些文件规则过滤
 
+[SuppressionFilter](https://checkstyle.org/filters/suppressionfilter.html)
+
 - checkstyle-suppression.xml:
 
 ```xml

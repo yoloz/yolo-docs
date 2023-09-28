@@ -90,11 +90,29 @@ maven-shade-plugin 插件有个配置属性:createDependencyReducedPom,默认值
 
 我们如果在另一个工程 B 中引用了 A 工程对应的 A.jar，而且 B 也依赖了 spring-boot-starter-tomcat，那么我们在 B 工程中就不需要再依赖 spring-boot-starter-tomcat 了，这样可以避免重复引用。
 
-## Plugin validation issues were detected in 1 plugin(s)
+## Plugin validation issues were detected in n plugin(s)
 
-> For more or less details, use 'maven.plugin.validation' property with one of the values (case insensitive): [BRIEF, DEFAULT, VERBOSE]
+```log
+[INFO] ------------------------------------------------------------------------
+[WARNING]
+[WARNING] Plugin validation issues were detected in 2 plugin(s)
+[WARNING]
+[WARNING]  * org.apache.maven.plugins:maven-compiler-plugin:3.10.1
+[WARNING]  * org.apache.maven.plugins:maven-resources-plugin:3.3.0
+[WARNING]
+[WARNING] For more or less details, use 'maven.plugin.validation' property with one of the values (case insensitive): [BRIEF, DEFAULT, VERBOSE]
+[WARNING]
+```
 
-`mvn -Dmaven.plugin.validation=verbose ...`
+`mvn -Dmaven.plugin.validation=verbose ...`很多时候只需要升级指定的 [plugins](https://maven.apache.org/plugins/index.html) 即可，如下：
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.11.0</version>
+</plugin>
+```
 
 ## 打包排除 resources 文件
 
