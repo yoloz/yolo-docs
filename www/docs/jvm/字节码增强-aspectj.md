@@ -1,4 +1,80 @@
-## spring boot
+## 使用切面文件
+
+```java
+//服务编码
+public class NameService {
+    public void printName(String name){
+        System.out.println(name);
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+编写切面文件 `WasteTime.aj`：
+
+```java
+public aspect WasteTime {
+
+    pointcut print():execution(void NameService.printName(..));
+
+    void around(): print(){
+        long cost = System.currentTimeMillis();
+        proceed();
+        cost = System.currentTimeMillis() - cost;
+        System.out.println("method printName cost :" + cost);
+    }
+}
+```
+
+```java
+//采用AspectJ编译器编译后执行
+public class Main {
+    public static void main(String[] args) {
+        NameService nameService = new NameService();
+        nameService.printName("tiang");
+    }
+}
+/**结果
+tiang
+method printName cost :1000
+**/
+```
+
+将编译后的 NamService.class 文件进行反编译:
+
+```java
+public class NameService
+{
+    public void printName(final String name) {
+        printName_aroundBody1$advice(this, name, WasteTime.aspectOf(), null);
+    }
+    // 原方法
+    private static final /* synthetic */ void printName_aroundBody0(final NameService ajc$this, final String name) {
+        System.out.println(name);
+        try {
+            Thread.sleep(1000L);
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    // 增强的代码与原方法耦合
+    private static final /* synthetic */ void printName_aroundBody1$advice(final NameService ajc$this, final String name, final WasteTime ajc$aspectInstance, final AroundClosure ajc$aroundClosure) {
+        long cost = System.currentTimeMillis();
+        printName_aroundBody0(ajc$this, name);
+        cost = System.currentTimeMillis() - cost;
+        System.out.println("method printName cost :" + cost);
+    }
+}
+```
+
+从反编译之后的结果可以看出，增强的部分代码被直接编译整合进了原有类的代码中。顺便一提的是，aspectJ 除了支持自定义的`.aj` 文件进行切面之外，还支持直接使用 java 代码通过注解@Before、@Around 等进行编码，这一点也被后来的 spring 所借鉴。
+
+## 使用注解
 
 ```xml
 <dependency>
