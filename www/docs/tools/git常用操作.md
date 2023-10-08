@@ -170,6 +170,8 @@ master   A<---B
 
 > 执行`git cherry-pick ..proto_update`报错：`fatal: bad revision '..proto_update'`。原因是本地没有 proto_update 分支的代码，应先拉取该分支的代码:`git fetch --all`，此时如果执行后还报错，可以手动切到分支`git checkout proto_update`，再切回来执行即可。
 
+> 应用另一个分支的部分修改时用`git cherry-pick`,需要合并整个分支时用`git merge`
+
 ### merge confilct
 
 手动处理冲突文件：其中`<<<<<<< HEAD` 到 `=======` 中间的内容是 local 提交的，`=======`到 `>>>>>>> commit-id` 是远程仓库中的内容。
