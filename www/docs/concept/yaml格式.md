@@ -32,7 +32,7 @@ name: '你好YAML'   #定义一个字符串
 
 ## 对象
 
-使用冒号代表，格式为 key: value，**冒号后面要加一个空格** `key: value` ，可以使用缩进表示层级关系：
+使用冒号代表，格式为`key: value`，**冒号后面要加一个空格** `key: value` ，可以使用缩进表示层级关系：
 
 ```yaml
 key:
@@ -51,7 +51,7 @@ YAML 中还支持流式(flow)语法表示对象，比如上面例子可以写为
   - complexvalue2
 ```
 
-意思即对象的属性是一个数组\[complexkey1, complexkey2\]，对应的值也是一个数组\[complexvalue1, complexvalue2\]
+意思即对象的属性是一个数组`[complexkey1, complexkey2]`，对应的值也是一个数组`[complexvalue1, complexvalue2]`
 
 ## 数组
 
@@ -99,11 +99,11 @@ int:
   - 123
   - 0b1010_0111_0100_1010_1110 #二进制表示
 null:
-  nodeName: 'node'
+  nodeName: "node"
   parent: ~ #使用~表示null
 string:
   - 哈哈
-  - 'Hello world' #可以使用双引号或者单引号包裹特殊字符
+  - "Hello world" #可以使用双引号或者单引号包裹特殊字符
   - newline
     newline2 #字符串可以拆成多行，每一行会被转化成一个空格
 date:
@@ -116,7 +116,7 @@ datetime:
 
 YAML 中提供了很多特殊符号，在这里简单介绍常用的一些：
 
-- `---`
+### `---`
 
 YAML 可以在同一个文件中，使用`---`表示一个文档的开始, 比如 Springboot 中 profile 的定义：
 
@@ -150,24 +150,7 @@ User: ed
 Warning: A slightly different error message.
 ```
 
-- ... 与`---`
-
-... 和`---`配合使用，在一个配置文件中代表一个文件的结束：
-
-```yaml
----
-time: 20:03:20
-player: Sammy Sosa
-action: strike (miss)
----
-time: 20:03:47
-player: Sammy Sosa
-action: grand slam
-```
-
-相当于在一个 yaml 文件中连续写了两个 yaml 配置项
-
-- `!!`
+### `!!`
 
 YAML 中使用`!!` 做类型强行转换：
 
@@ -190,11 +173,14 @@ string:
 
 将数组解析为 set，简单理解，转化的内容就是：[{Ken Griffy=58}, {Mark McGwire=65}, {Sammy Sosa=63}]，重复的 Sammy Sosa 去掉。
 
-- `>`与|
+### `>`与`|`
 
-`>` 在字符串中折叠换行，| 保留换行符，这两个符号是 YAML 中字符串经常使用的符号，比如：
+`>` 在字符串中折叠换行，`|` 保留换行符，这两个符号是 YAML 中字符串经常使用的符号，比如：
 
 ```yaml
+cmd: docker run
+  --name my-nginx
+  -d nginx
 accomplishment: >
   Mark set a major league
   home run record in 1998.
@@ -203,15 +189,13 @@ stats: |
   0.278 Batting Average
 ```
 
-那么结果是：
+- YAML 默认会把换行符转换成空格，`cmd=docker run --name my-nginx -d nginx `
+- `|`符号保留了换行符`stats=65 Home Runs\n0.278 Batting Average`，
+- accomplishment 的结果为 `accomplishment=Mark set a major league home run record in 1998.`即将换行符转化成了空格；
 
-```yaml
-stats=65 Home Runs
-0.278 Batting Average,
-```
+**要注意一点的是，每行的文本前一定要有一个空格**。
 
-即| 符号保留了换行符，而 accomplishment 的结果为 `accomplishment=Mark set a major league home run record in 1998.`
-即将换行符转化成了空格；**要注意一点的是，每行的文本前一定要有一个空格**。|符号常见用于在 YAML 中配置 HTML 片段：
+`|`符号常见用于在 YAML 中配置 HTML 片段：
 
 ```yaml
 phraseTemplate: |
@@ -220,9 +204,9 @@ phraseTemplate: |
   </p>
 ```
 
-- 引用(&, `*`)
+### 引用(`&`, `*`)
 
-重复的内容在 YAML 中可以使用&来完成锚点定义，使用`*`来完成锚点引用，例如：
+重复的内容在 YAML 中可以使用`&`来完成锚点定义，使用`*`来完成锚点引用，例如：
 
 ```yaml
 hr:
@@ -233,7 +217,7 @@ rbi:
   - Ken Griffey
 ```
 
-可以看到，在 hr 中，使用&SS 为 Sammy Sosa 设置了一个锚点（引用），名称为 SS，在 rbi 中，使用`*SS` 完成了锚点使用，那么结果为 `{rbi=[Sammy Sosa, Ken Griffey], hr=[Mark McGwire, Sammy Sosa]}` 我们也可以这样定义：
+可以看到，在 hr 中，使用`&SS` 为 Sammy Sosa 设置了一个锚点（引用），名称为 SS，在 rbi 中，使用`*SS` 完成了锚点使用，那么结果为 `{rbi=[Sammy Sosa, Ken Griffey], hr=[Mark McGwire, Sammy Sosa]}` 我们也可以这样定义：
 
 ```yaml
 SS: &SS Sammy Sosa
@@ -256,7 +240,7 @@ hr: *default
 
 那么 hr 相当于引用了 default 的数组，注意，hr: `*default` 要写在同一行。
 
-- 合并内容
+### 合并内容
 
 主要和锚点配合使用，可以将一个锚点内容直接合并到一个对象中，看一个示例：
 
