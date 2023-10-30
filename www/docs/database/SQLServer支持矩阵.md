@@ -34,3 +34,13 @@
 | 6.2          | 是               | 是                      |                    |                 |                 | 是              | 是              | 是              | 是              | 是              | 是                 | 是              |
 
 > `6.2`及以下版本可查看官方文件(页头链接)
+
+## maven 中添加依赖
+
+```xml
+<dependency>
+    <groupId>com.microsoft.sqlserver</groupId>
+    <artifactId>mssql-jdbc</artifactId>
+    <version>12.4.1.jre11</version>
+</dependency>
+```
