@@ -39,7 +39,7 @@ git remote add origin https://gitee.com/${account}/mavenrepo.git
 </distributionManagement>
 ```
 
-然后执行`mvn deploy`，或者使用[命令行](https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html)方式：`mvn deploy -DaltDeploymentRepository=mavenrepo::file:/home/$(whoami)/.m2/mavenrepo`
+然后执行`mvn deploy`，或者使用[命令行](https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html)方式：`mvn deploy -DaltDeploymentRepository=mavenrepo::file:/home/$(whoami)/.m2/mavenrepo -DskipTests`
 
 :::info
 一般无需在`build`里添加`maven-deploy-plugin`，要添加额外配置如：[Deploying With Network Issues](https://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-network-issues.html)
