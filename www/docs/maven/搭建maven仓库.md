@@ -7,6 +7,8 @@ Maven 仓库用于存放不同编译的 artifacts 和 dependencies 的模块集�
 1. 在 gitee 创建一个仓库，如`mavenrepo`(`https://gitee.com/${account}/mavenrepo.git`);
 
    > 或在 github 创建一个仓库，如`mavenrepo`(`https://github.com/${account}/mavenrepo.git`)；
+   >
+   > 使用方便仓库设置为 public；
 
 在本地文件创建对应仓库：
 
