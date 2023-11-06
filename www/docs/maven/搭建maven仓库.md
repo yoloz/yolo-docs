@@ -4,25 +4,40 @@ Maven 仓库用于存放不同编译的 artifacts 和 dependencies 的模块集�
 
 ## 准备仓库
 
-在 gitee 创建一个仓库，如`mavenrepo`(`https://gitee.com/${account}/mavenrepo.git`);
+1. 在 gitee 创建一个仓库，如`mavenrepo`(`https://gitee.com/${account}/mavenrepo.git`);
 
-> 或在 github 创建一个仓库，如`mavenrepo`(`https://github.com/${account}/mavenrepo.git`)；
+   > 或在 github 创建一个仓库，如`mavenrepo`(`https://github.com/${account}/mavenrepo.git`)；
 
-本地文件系统：
+在本地文件创建对应仓库：
 
-在 pom.xml 中添加配置，然后执行`mvn deploy`
+```bash
+mkdir /home/$(whoami)/.m2/mavenrepo
+cd mavenrepo
+git init
+git add .
+git config user.name "test"
+git config user.email "test@abc.com"
+git commit -m "提交xxx"
+git remote add origin https://gitee.com/${account}/mavenrepo.git
+```
+
+> 稍微复杂点可以创建分支 snapshot 和 release，对应测试和生产环境
+
+2. 本地文件部署进仓库：
+
+在 pom.xml 中添加如下配置
 
 ```xml
 <distributionManagement>
     <repository>
         <id>mavenrepo</id>
         <name>Personal Maven Repository</name>
-        <url>file:/home/${user}/.m2/mavenrepo</url>
+        <url>file:${user.home}/.m2/mavenrepo</url>
     </repository>
 </distributionManagement>
 ```
 
-或者直接[命令行](https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html) 添加参数`mvn deploy -DaltDeploymentRepository=mavenrepo::file:/home/$(whoami)/.m2/mavenrepo`
+然后执行`mvn deploy`，或者使用[命令行](https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html)方式：`mvn deploy -DaltDeploymentRepository=mavenrepo::file:/home/$(whoami)/.m2/mavenrepo`
 
 :::info
 一般无需在`build`里添加`maven-deploy-plugin`，要添加额外配置如：[Deploying With Network Issues](https://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-network-issues.html)
@@ -32,20 +47,12 @@ Maven 仓库用于存放不同编译的 artifacts 和 dependencies 的模块集�
 [Deployment with external SSH](https://maven.apache.org/plugins/maven-deploy-plugin/examples/deploy-ssh-external.html)
 :::
 
-提交：
+3. 提交：
 
 ```bash
 cd mavenrepo
-git init
-git add .
-git config user.name "test"
-git config user.email "test@abc.com"
-git commit -m "提交xxx"
-git remote add origin https://gitee.com/${account}/mavenrepo.git
 git push -u origin "master"
 ```
-
-> 稍微复杂点可以创建分支 snapshot 和 release，对应测试和生产环境
 
 ## 使用仓库
 
