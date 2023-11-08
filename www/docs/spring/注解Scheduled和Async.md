@@ -210,3 +210,14 @@ class SpringAsyncConfigurer extends AsyncConfigurerSupport {
      }
  }
 ```
+
+:::caution `@Async`失效
+
+- 异步方法使用`static`修饰;
+- 异步类没有使用`@Component`注解（或其他注解）导致 spring 无法扫描到异步类;
+- 异步方法不能与异步方法在同一个类中;
+- 类中需要使用`@Autowired`或`@Resource`等注解自动注入，不能自己手动 new 对象;
+- 如果使用 SpringBoot 框架必须在启动类中增加`@EnableAsync`注解;
+- 在`Async`方法上标注`@Transactional`是没用的。在`Async方法调用的方法上标注`@Transactional`有效;
+
+:::
