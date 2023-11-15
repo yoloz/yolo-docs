@@ -68,3 +68,10 @@ mysql 的配置文件(my.cnf,my.ini)格式错误，如头不是`[mysqld]`
 
 启动 mysql 报错`the server quit without updating PID file...`
 原因是配置文件(my.cnf)中有配置不支持或者错误，查看 mysql 数据库 data 目录里的`xxx.err`文件可知。
+
+## Public Key Retrieval is not allowed
+
+`mysql 8.0`默认使用`caching_sha2_password`身份验证机制（即从原来`mysql_native_password`更改为`caching_sha2_password`）。修改用户的密码和加密方式如下：
+
+- 在命令行模式下进入 mysql，输入以下命令:`ALTER USER 'test'@'%' IDENTIFIED WITH mysql_native_password BY 'test';`
+- 在配置数据源的时候(jdbc url)直接将属性`allowPublicKeyRetrieval`设置为`true`即可;

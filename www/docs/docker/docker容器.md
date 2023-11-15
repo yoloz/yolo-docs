@@ -1,15 +1,3 @@
-docker 进程使用 Unix Socket 而不是 TCP 端口。而默认情况下，Unix socket 属于 root 用户，需要 root 权限才能访问。
-
-- 使用 sudo 获取管理员权限，运行 docker 命令
-- docker 守护进程启动的时候，会默认赋予名字为 docker 的用户组读写 Unix socket 的权限，因此只要创建 docker 用户组，并将当前用户加入到 docker 用户组中，那么当前用户就有权限访问 Unix socket 了，进而也就可以执行 docker 相关命令
-
-```bash
-sudo groupadd docker     #添加docker用户组
-sudo gpasswd -a $USER docker     #将登陆用户加入到docker用户组中
-newgrp docker     #更新用户组
-docker ps    #测试docker命令是否可以使用sudo正常使用
-```
-
 ## docker run 命令详解
 
 命令格式：`docker run [OPTIONS] IMAGE [COMMAND] [ARG...]`
