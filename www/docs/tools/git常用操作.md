@@ -62,6 +62,28 @@ $ git pull origin master:brantest
 $ git pull origin master
 ```
 
+### stash
+
+```bash
+# error: Your local changes to the following files would be overwritten by merge:
+#         ...
+# Please commit your changes or stash them before you merge.
+# Aborting
+
+# 保存当前工作进度，能够将所有未提交的修改保存至堆栈中，用于后续恢复
+$ git stash
+# 把服务器仓库的更新拉到本地仓库中
+$ git pull
+# 刚才stash到本地栈中的代码pop到本地
+$ git stash pop
+```
+
+> `git stash apply`: 使用 apply 恢复，stash 列表中的信息是会继续保留的，而使用 pop 恢复，会将 stash 列表中的信息进行删除;
+>
+> `git stash list`：存储到本地栈顶以后，你可以使用 git stash list 查看你本地存储的 stash 日志;
+>
+> `git stash clear`: 清空 git 栈，原来 stash 的节点都会被清除;
+
 ## push
 
 将本地的分支版本上传到远程并合并。命令格式`git push <远程主机名> <本地分支名>:<远程分支名>`,如果本地分支名与远程分支名相同，则可以省略冒号：`git push <远程主机名> <本地分支名>`
