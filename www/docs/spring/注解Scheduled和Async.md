@@ -80,7 +80,15 @@ public class TaskDemo1 {
 }
 ```
 
-> 使用`@Async`来异步调用之后，我们之前配置的`ThreadPoolTaskScheduler`就没有效果了。
+如此配置会报错：
+
+```log
+[scheduling-1] DEBUG o.s.s.a.AnnotationAsyncExecutionInterceptor - Could not find unique TaskExecutor bean. Continuing search for an Executor bean named 'taskExecutor'
+org.springframework.beans.factory.NoUniqueBeanDefinitionException: No qualifying bean of type 'org.springframework.core.task.TaskExecutor' available: expected single matching bean but found 2: applicationTaskExecutor,taskScheduler
+...
+```
+
+一起配置使用参见文末[配置定时任务异步任务](#配置定时任务异步任务),**配置了`taskScheduler`则无需将两者一起使用**,使用`@Async`来异步调用之后，配置的`taskScheduler`线程池无用最后走的都是异步线程池。
 
 ## @Async
 
@@ -179,6 +187,7 @@ class SpringAsyncConfigurer extends AsyncConfigurerSupport {
          //线程名字前缀
          executor.setThreadNamePrefix("taskExecutor-");
          executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+         executor.initialize();
          return executor;
      }
  }
@@ -206,6 +215,7 @@ class SpringAsyncConfigurer extends AsyncConfigurerSupport {
          //线程名字前缀
          executor.setThreadNamePrefix("taskExecutor-");
          executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+         executor.initialize();
          return executor;
      }
  }
@@ -221,3 +231,64 @@ class SpringAsyncConfigurer extends AsyncConfigurerSupport {
 - 在`Async`方法上标注`@Transactional`是没用的。在`Async方法调用的方法上标注`@Transactional`有效;
 
 :::
+
+## 配置定时任务异步任务
+
+源文[SpringBoot 线程池配置 定时任务，异步任务](https://www.cnblogs.com/gaomanito/p/11120164.html)
+
+```java
+@Configuration
+@EnableAsync
+@EnableScheduling
+@Slf4j
+public class ExecutorConfig implements SchedulingConfigurer, AsyncConfigurer {
+
+    /**
+     * 定时任务使用的线程池
+     */
+    @Bean(destroyMethod = "shutdown", name = "taskScheduler")
+    public ThreadPoolTaskScheduler taskScheduler(){
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(10);
+        scheduler.setThreadNamePrefix("task-");
+        scheduler.setAwaitTerminationSeconds(600);
+        scheduler.setWaitForTasksToCompleteOnShutdown(true);
+        return scheduler;
+    }
+
+    /**
+     * 异步任务执行线程池
+     */
+    @Bean(name = "asyncExecutor")
+    public ThreadPoolTaskExecutor asyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setQueueCapacity(1000);
+        executor.setKeepAliveSeconds(600);
+        executor.setMaxPoolSize(20);
+        executor.setThreadNamePrefix("taskExecutor-");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.initialize();
+        return executor;
+    }
+
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
+        ThreadPoolTaskScheduler taskScheduler = taskScheduler();
+        scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
+    }
+
+    @Override
+    public Executor getAsyncExecutor() {
+        return asyncExecutor();
+    }
+
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return (throwable, method, objects) -> {
+            log.error("异步任务执行出现异常, message:{}, method:{}, params:{}", throwable, method, objects);
+        };
+    }
+
+}
+```
