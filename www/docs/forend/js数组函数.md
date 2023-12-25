@@ -42,6 +42,26 @@ fruits.unshift("apple");
 // ['apple', 'banana', 'cherry']
 ```
 
+### splice()
+
+`splice()`方法向/从数组中添加/删除项目，然后返回被删除的项目:`arrayObject.splice(index,howmany,item1,.....,itemX)`
+
+> index:必需,规定添加/删除项目的位置，使用负数可从数组结尾处开始位置；
+> howmany:必需,要删除的项目数量,如果设置为 0，则不会删除项目;
+> item…:可选,向数组添加的新项目;
+
+```js
+// 添加一个元素
+var array = [1, 2, 3, 4, 6];
+array.splice(4, 0, 5);
+//[1,2,3,4,5,6]
+
+// 删除并替换一个元素
+var array = [1, 2, 2, 4, 5];
+array.splice(2, 1, 3);
+// [1,2,3,4,5]
+```
+
 ## Searching and Slicing
 
 ### indexOf()
