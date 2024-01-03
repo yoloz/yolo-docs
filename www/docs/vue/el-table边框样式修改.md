@@ -42,12 +42,26 @@
 
 可查看[vue 中 style 深度访问](./vue中style深度访问.md)
 
-- 表格去除分割线后无数据下边框去除
+## 表格去除分割线后无数据下边框去除
 
 ```css
 <style scoped>
+
 :deep(.el-table__inner-wrapper::before){
     height: 0;
 }
+
+</style>
+```
+
+## 无数据时缩小表格高度
+
+```css
+<style scoped>
+
+:deep(.el-table .el-table__empty-block){
+    min-height: 50px;
+}
+
 </style>
 ```
