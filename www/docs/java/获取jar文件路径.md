@@ -18,11 +18,10 @@ String path = this.getClass().getProtectionDomain().getCodeSource().getLocation(
 path = java.net.URLDecoder.decode(path, "UTF-8");
 ```
 
-通过进一步处理，就可以得到`jar`包的目录：
+通过进一步处理，就可以得到 jar 包的目录：
 
 ```java
+//  File.separator在Windows下是反斜杠(\)，在Linux下是斜杠(/)
 int lastIndex = path.lastIndexOf(File.separator) + 1;
 path = path.substring(0, lastIndex);
 ```
-
-> `File.separator`在 Windows 下是反斜杠(\)，在 Linux 下是斜杠(/);
