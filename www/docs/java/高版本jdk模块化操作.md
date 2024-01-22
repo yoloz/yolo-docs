@@ -118,7 +118,7 @@ Caused by: java.lang.NoClassDefFoundError: java/lang/instrument/ClassFileTransfo
 
 启动成功，实际还缺少一个模块，即下文的报错。
 
-## java.lang.ClassNotFoundException: sun.rmi.transport.Target
+### java.lang.ClassNotFoundException: sun.rmi.transport.Target
 
 ```bash
 INFO [Thread-2] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesRmiTargets Failed to find class sun.rmi.transport.Target to clear context class loader for web application [manager]. This is expected on non-Sun JVMs.
@@ -237,6 +237,26 @@ java -Dlog4j.configuration=file:/data/src/Cassandra/log4j.properties
 --add-opens=java.base/java.io=ALL-UNNAMED
 -jar /data/src/cassandra-jar-with-dependencies.jar
 /data/src/Cassandra/config.properties
+```
+
+### maven 操作配置
+
+```xml
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>3.8.1</version>
+      <configuration>
+        <compilerArgs>
+          <arg>--add-exports</arg>
+          <arg>java.management/sun.management=ALL-UNNAMED</arg>
+        </compilerArgs>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 ```
 
 ## 通过类搜索模块
