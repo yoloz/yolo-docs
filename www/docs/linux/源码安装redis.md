@@ -9,6 +9,11 @@
 $ tar -xzvf redis-stable.tar.gz
 $ cd redis-stable
 $ make
+# To build with TLS support, you'll need to install OpenSSL development libraries (e.g., libssl-dev on Debian/Ubuntu) and then run:
+$ make BUILD_TLS=yes
+# zmalloc.h:50:10: fatal error: jemalloc/jemalloc.h: No such file or directory
+# jemalloc被证明比libc有更少的fragmentation problems,默认使用jemalloc，如果只有libc添加参数如下：
+$ make MALLOC=libc
 ```
 
 :::note
