@@ -109,7 +109,7 @@ $ sudo apt install nmap
 
 ```bash
 # 查看想起信息添加-d
-$ nmap -sV 192.168.124.251 -p10001 -d --script ./cvescannerv2.nse --script-args http=0,db=./CVEScannerV2DB/cve.db,product-aliases=./product-aliases.json
+$ nmap -sV <target_ip> -p10001 -d --script ./cvescannerv2.nse --script-args db=./CVEScannerV2DB/cve.db,product-aliases=./product-aliases.json
 ```
 
 - variable 'format_timestamp' is not declared
